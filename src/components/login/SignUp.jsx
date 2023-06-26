@@ -1,13 +1,34 @@
 import { useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
-function Signup() {
+function SignUp() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordToggle, setPasswordToggle] = useState(true);
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
+	const { SignUpAuth } = useAuth();
+
+	async function handleSubmit(e) {
+		e.preventDefault();
+
+		if (password.length < 16)
+			return setError("Password is too short");
+
+		try {
+			setLoading(true);
+			setError("");
+			await SignUpAuth(email, password);
+		} catch {
+			setError("Could not create an account");
+		} finally {
+			setLoading(false);
+		}
+	}
 
 	return (
 		<div>
-			<form className="flex flex-col gap-4">
+			<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 				<h1 className="text-2xl dark:text-white">
                     Sign up
 				</h1>
@@ -18,7 +39,7 @@ function Signup() {
 						value={email}
 						placeholder="john.smith@mail.com"
 						onChange={(e) => setEmail(e.target.value)}
-						className="w-full p-2 rounded-md dark:text-black"
+						className="w-full p-2 border border-black rounded-md dark:text-black"
 					/>
 				</label>
 				<div>
@@ -29,7 +50,7 @@ function Signup() {
 							value={password}
 							placeholder="IWMqwL9FJ8A%*QXEc^P2"
 							onChange={(e) => setPassword(e.target.value)}
-							className="w-full p-2 rounded-md dark:text-black"
+							className="w-full p-2 border border-black rounded-md dark:text-black"
 						/>
 					</label>
 					<p
@@ -41,16 +62,23 @@ function Signup() {
 				</div>
 				<button
 					type="submit"
-					className="mb-4 p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white"
+					disabled={loading}
+					className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
+                    disabled:bg-orange-200 hover:disabled:bg-orange-200"
 				>
                     Sign up
 				</button>
+				<div className="text-sm text-red-500 text-center mt-[-10px]">
+					<p className={ !error ? "hidden" : "visible"}>
+						{error}
+					</p>
+				</div>
 			</form>
-			<div className="dark:text-white">
+			<div className="mt-4 dark:text-white">
                 Already have an account? Log in
 			</div>
 		</div>
 	);
 }
 
-export default Signup;
+export default SignUp;
