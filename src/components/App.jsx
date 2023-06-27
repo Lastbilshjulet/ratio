@@ -7,17 +7,18 @@ import SignUp from "./preLogin/SignUp";
 import Login from "./preLogin/Login";
 import Dashboard from "./postLogin/Dashboard";
 import FallbackComponent from "./FallbackComponent";
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./routes/PrivateRoute";
+import PublicRoute from "./routes/PublicRoute";
 
 const router = createBrowserRouter(
 	[
 		{
 			path: "/signup",
-			element: <SignUp />
+			element: <PublicRoute component={SignUp} />
 		},
 		{
 			path: "/login",
-			element: <Login />
+			element: <PublicRoute component={Login} />
 		},
 		{
 			path: "/",
