@@ -1,31 +1,27 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-function Login() {
+function ForgotPassword() {
 	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
-	const [passwordToggle, setPasswordToggle] = useState(true);
+	const [message, setMessage] = useState("");
 	const [loading, setLoading] = useState(false);
-	const { LogInAuth } = useAuth();
-	const navigate = useNavigate();
+	const { ResetPasswordAuth } = useAuth();
 
 	async function handleSubmit(e) {
 		e.preventDefault();
 
-		if (password.length < 16)
-			return setError("Password is too short");
-
 		try {
+			setMessage("");
 			setLoading(true);
 			setError("");
-			await LogInAuth(email, password);
+			await ResetPasswordAuth(email);
+			setMessage("Check your inbox for further instructions");
 		} catch {
-			setError("Failed to log in");
+			setError("Failed to reset password");
 		} finally {
 			setLoading(false);
-			navigate("/", { replace: true });
 		}
 	}
 
@@ -34,8 +30,13 @@ function Login() {
 			<div className="border border-black dark:border-white rounded-md p-8">
 				<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 					<h1 className="text-2xl dark:text-white">
-                        Log in
+                        Password reset
 					</h1>
+					{
+						message && <div className="p-4 rounded-md bg-green-400">
+							{message}
+						</div>
+					}
 					<label className="dark:text-white">
                         Email: <br />
 						<input
@@ -46,47 +47,26 @@ function Login() {
 							className="w-full p-2 border border-black rounded-md dark:text-black"
 						/>
 					</label>
-					<div>
-						<label className="dark:text-white">
-                            Password: <br />
-							<input
-								type={passwordToggle ? "password" : "text"}
-								value={password}
-								placeholder="IWMqwL9FJ8A%*QXEc^P2"
-								onChange={(e) => setPassword(e.target.value)}
-								className="w-full p-2 border border-black rounded-md dark:text-black"
-							/>
-						</label>
-						<p
-							className="text-sm dark:text-white text-center cursor-pointer"
-							onClick={() => setPasswordToggle(!passwordToggle)}
-						>
-							{ passwordToggle ? "Show" : "Hide" } password
-						</p>
-					</div>
 					<button
 						type="submit"
 						disabled={loading}
 						className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                             disabled:bg-orange-200 hover:disabled:bg-orange-200"
 					>
-                        Log in
+                        Reset password
 					</button>
 					<div className="text-sm text-red-500 text-center mt-[-10px]">
-						<p className={ error ? "visible" : "hidden" }>
+						<p className={ !error ? "hidden" : "visible"}>
 							{error}
 						</p>
 					</div>
+					<div className="dark:text-white text-center cursor-pointer">
+						<Link to={"/login"}>Go back to log in</Link>
+					</div>
 				</form>
-				<div className="mt-4 dark:text-white">
-					<Link to={"/forgot-password"}>Forgot password?</Link>
-				</div>
-				<div className="mt-4 dark:text-white">
-					<Link to={"/signup"}>Don&apos;t have an account? Sign up</Link>
-				</div>
 			</div>
 		</div>
 	);
 }
 
-export default Login;
+export default ForgotPassword;
