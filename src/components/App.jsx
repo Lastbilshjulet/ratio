@@ -3,9 +3,11 @@ import {
 	createBrowserRouter,
 	RouterProvider
 } from "react-router-dom";
-import SignUp from "./login/SignUp";
-import Login from "./login/Login";
-import Dashboard from "./dashboard/Dashboard";
+import SignUp from "./preLogin/SignUp";
+import Login from "./preLogin/Login";
+import Dashboard from "./postLogin/Dashboard";
+import FallbackComponent from "./FallbackComponent";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter(
 	[
@@ -19,7 +21,7 @@ const router = createBrowserRouter(
 		},
 		{
 			path: "/",
-			element: <Dashboard />
+			element: <PrivateRoute component={Dashboard} />
 		}
 	]
 );
@@ -27,7 +29,7 @@ const router = createBrowserRouter(
 function App() {
 	return (
 		<AuthProvider>
-			<RouterProvider router={router} />
+			<RouterProvider router={router} fallbackElement={<FallbackComponent />} />
 		</AuthProvider>
 	);
 }
