@@ -9,6 +9,7 @@ import Dashboard from "./postLogin/Dashboard";
 import FallbackComponent from "./FallbackComponent";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
+import ForgotPassword from "./preLogin/ForgotPassword";
 
 const router = createBrowserRouter(
 	[
@@ -19,6 +20,10 @@ const router = createBrowserRouter(
 		{
 			path: "/login",
 			element: <PublicRoute component={Login} />
+		},
+		{
+			path: "/forgot-password",
+			element: <PublicRoute component={ForgotPassword} />
 		},
 		{
 			path: "/",
