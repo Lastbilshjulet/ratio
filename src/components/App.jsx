@@ -5,7 +5,8 @@ import {
 } from "react-router-dom";
 import SignUp from "./preLogin/SignUp";
 import Login from "./preLogin/Login";
-import Dashboard from "./postLogin/Dashboard";
+import GroupsDashboard from "./postLogin/GroupsDashboard";
+import GroupDetails from "./postLogin/GroupDetails";
 import FallbackComponent from "./FallbackComponent";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
@@ -27,7 +28,15 @@ const router = createBrowserRouter(
 		},
 		{
 			path: "/",
-			element: <PrivateRoute component={Dashboard} />
+			element: <PrivateRoute component={GroupsDashboard} />
+		},
+		{
+			path: "/groups",
+			element: <PrivateRoute component={GroupsDashboard} />
+		},
+		{
+			path: "/groups/:name",
+			element: <PrivateRoute component={GroupDetails} />
 		}
 	]
 );
