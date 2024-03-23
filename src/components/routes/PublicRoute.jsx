@@ -9,7 +9,6 @@ function PublicRoute({ component: Component }) {
 		<>
 			{currentUser ? <Navigate to="/" /> : <Component />}
 		</>
-
 	);
 }
 
