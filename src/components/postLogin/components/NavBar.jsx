@@ -10,17 +10,18 @@ function NavBar({ activeTab }) {
 
 	return (
 		<nav className="w-screen p-4 flex items-center gap-8 justify-between dark:bg-black dark:text-white border-b border-b-black dark:border-b-white">
-			<Link to={"/groups"}>
-
-				<div className={"text-xl hover:text-orange-200 " + (activeTab === "groups" ? "text-orange-500" : "")}>
-                Groups
-				</div>
-			</Link>
-			<Link to={"/profile"}>
-				<div className={"text-xl hover:text-orange-200 " + (activeTab === "profile" ? "text-orange-500" : "")}>
-                Profile
-				</div>
-			</Link>
+			<div className="flex row-auto gap-12">
+				<Link to={"/groups"}>
+					<div className={"text-xl hover:text-orange-300 " + (activeTab === "groups" ? "text-orange-500" : "")}>
+                        Groups
+					</div>
+				</Link>
+				<Link to={"/profile"}>
+					<div className={"text-xl hover:text-orange-300 " + (activeTab === "profile" ? "text-orange-500" : "")}>
+                        Profile
+					</div>
+				</Link>
+			</div>
 			<button
 				onClick={handleLogout}
 				className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
