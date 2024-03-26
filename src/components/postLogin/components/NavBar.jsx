@@ -1,6 +1,6 @@
 import { useAuth } from "../../../contexts/AuthContext";
 
-function NavBar() {
+function NavBar({ activeTab }) {
 	const { LogOutAuth } = useAuth();
 
 	async function handleLogout() {
@@ -9,7 +9,7 @@ function NavBar() {
 
 	return (
 		<nav className="w-screen p-4 flex items-center gap-8 justify-between dark:bg-black dark:text-white border-b border-b-black dark:border-b-white">
-			<div className="text-xl hover:text-orange-200">
+			<div className={"text-xl hover:text-orange-200 " + (activeTab === "groups" ? "text-orange-500" : "")}>
                 Groups
 			</div>
 			<button
