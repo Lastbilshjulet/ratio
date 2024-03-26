@@ -18,7 +18,7 @@ const app = initializeApp({
 });
 
 const appCheck = initializeAppCheck(app, {
-	provider: new ReCaptchaV3Provider(import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY),
+	provider: new ReCaptchaV3Provider("" + import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY),
 	isTokenAutoRefreshEnabled: true
 });
 
