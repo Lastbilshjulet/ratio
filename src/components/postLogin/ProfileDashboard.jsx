@@ -1,5 +1,6 @@
 import NavBar from "./components/NavBar";
 import { useAuth } from "../../contexts/AuthContext";
+import { updateProfile } from "firebase/auth";
 import { useState } from "react";
 
 function ProfileDashboard() {
@@ -13,15 +14,17 @@ function ProfileDashboard() {
 
 	async function handleProfileDetails(e) {
 		e.preventDefault();
+		setLoading(true);
 
-		try {
-			setLoading(true);
+		updateProfile((currentUser), {
+			displayName: displayName
+		}).then(() => {
 			setMessage("Successfully updated profile.");
-		} catch {
+		}).catch(() => {
 			setError("Failed to update profile.");
-		} finally {
+		}).finally(() => {
 			setLoading(false);
-		}
+		});
 	}
 
 	async function handleResetPassword(e) {
