@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { getAuth } from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -17,10 +16,5 @@ const app = initializeApp({
 	appId: import.meta.env.VITE_APP_APP_ID
 });
 
-const appCheck = initializeAppCheck(app, {
-	provider: new ReCaptchaV3Provider("" + import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY),
-	isTokenAutoRefreshEnabled: true
-});
-
-export const auth = getAuth(appCheck);
-export default appCheck;
+export const auth = getAuth(app);
+export default app;

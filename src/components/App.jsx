@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { AuthProvider } from "../contexts/AuthContext";
 import {
 	createBrowserRouter,
@@ -34,15 +33,6 @@ const router = createBrowserRouter(
 );
 
 function App() {
-	const [loading, setLoading] = useState(true);
-	useEffect(() => {
-		setLoading(false);
-	}, []);
-
-	if (loading) {
-		return <FallbackComponent />;
-	}
-
 	return (
 		<AuthProvider>
 			<RouterProvider router={router} fallbackElement={<FallbackComponent />} />
