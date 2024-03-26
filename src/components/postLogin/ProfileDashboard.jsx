@@ -16,9 +16,9 @@ function ProfileDashboard() {
 
 		try {
 			setLoading(true);
-			setMessage("Check your inbox for further instructions");
+			setMessage("Successfully updated profile.");
 		} catch {
-			setError("Failed to update profile");
+			setError("Failed to update profile.");
 		} finally {
 			setLoading(false);
 		}
