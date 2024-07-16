@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 if (import.meta.env.VITE_APP_DEV) {
 	self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
@@ -24,4 +25,5 @@ const appCheck = initializeAppCheck(
 );
 
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 export default appCheck;
