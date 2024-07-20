@@ -1,26 +1,36 @@
 import NavBar from "./components/NavBar";
 import GroupItem from "./components/GroupItem";
-import { useState, useEffect } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import { db } from "../../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { query, collection, where, getDocs } from "firebase/firestore";
+import { InfinitySpin } from "react-loader-spinner";
 
 function GroupsDashboard() {
+	const { currentUser } = useAuth();
 	const [groups, setGroups] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState("");
 
 	const fetchGroups = async () => {
-		await getDocs(collection(db, "groups"))
+		const q = query(collection(db, "groups"), where("members", "array-contains", currentUser.uid));
+		await getDocs(q)
 			.then((querySnapshot) => {
 				const newData = querySnapshot.docs
-					.map((doc) => ({ ...doc.data(),
-						id:doc.id }));
+					.map(
+						(doc) => ({
+							...doc.data(),
+							id: doc.id
+						})
+					);
 				setGroups(newData);
+				setError("");
 			})
 			.catch((e) => {
-				console.log(e.message);
-				alert(e.message);
+				setError(e.message);
 			})
 			.finally(() => {
-				console.log(groups);
+				setLoading(false);
 			});
 	};
 
@@ -33,10 +43,21 @@ function GroupsDashboard() {
 			<NavBar activeTab="groups"></NavBar>
 			<div className="grid place-content-center gap-4 mt-24">
 				{
-					groups.map(group => (
+					loading ? <InfinitySpin
+						visible={loading}
+						width="100"
+						color="#f97316"
+						ariaLabel="infinity-spin-loading"
+					/>
+						: groups.map(group => (
 				        <GroupItem key={group.id} name={group.name}></GroupItem>
-					))
+						))
 				}
+				<div className="text-sm text-red-500 text-center mt-[-10px]">
+					<p className={ error ? "visible" : "hidden" }>
+						{error}
+					</p>
+				</div>
 			</div>
 		</div>
 	);
