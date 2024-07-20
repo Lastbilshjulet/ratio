@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 function SignUp() {
 	const [email, setEmail] = useState("");
@@ -20,12 +22,13 @@ function SignUp() {
 		try {
 			setLoading(true);
 			setError("");
-			await SignUpAuth(email, password);
-		} catch {
-			setError("Failed to create an account");
-		} finally {
+			const response = await SignUpAuth(email, password);
+			await setDoc(doc(db, "users", response.user.uid), { groups: [] });
 			setLoading(false);
 			navigate("/", { replace: true });
+		} catch (e) {
+			console.log(e);
+			setError("Failed to create an account");
 		}
 	}
 
