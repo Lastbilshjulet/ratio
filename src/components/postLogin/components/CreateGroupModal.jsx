@@ -71,7 +71,7 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 					</label>
 					<button
 						type="submit"
-						disabled={loading}
+						disabled={loading || !currentUser}
 						className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                             disabled:bg-orange-200 hover:disabled:bg-orange-200"
 					>
