@@ -7,6 +7,7 @@ import SignUp from "./preLogin/SignUp";
 import Login from "./preLogin/Login";
 import ProfileDashboard from "./postLogin/ProfileDashboard";
 import GroupsDashboard from "./postLogin/GroupsDashboard";
+import JoinGroupRedirect from "./postLogin/JoinGroupRedirect";
 import GroupDetails from "./postLogin/GroupDetails";
 import FallbackComponent from "./FallbackComponent";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -38,6 +39,10 @@ const router = createBrowserRouter(
 		{
 			path: "/groups/:groupId",
 			element: <PrivateRoute component={GroupDetails} />
+		},
+		{
+			path: "/groups/:groupId/join",
+			element: <PrivateRoute component={JoinGroupRedirect} />
 		},
 		{
 			path: "/profile",
