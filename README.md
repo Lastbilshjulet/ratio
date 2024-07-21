@@ -8,8 +8,9 @@ This is what Ratio is supposed to do, but for free.
 
 ### Future features
 - [x] Signup and Login with email and password
-- [ ] Create a "block" where expenses can be added and shared
-- [ ] Sharing these "blocks"
+- [x] Create a group where expenses can be added and shared
+- [x] Allow other users to join groups
 - [ ] Adding expenses
 - [ ] Comparing expenses in a block
+- [ ] Improve styling on all viewports
 - [ ] More... 
