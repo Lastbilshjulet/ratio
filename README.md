@@ -10,7 +10,8 @@ This is what Ratio is supposed to do, but for free.
 - [x] Signup and Login with email and password
 - [x] Create a group where expenses can be added and shared
 - [x] Allow other users to join groups
+- [x] Reading expenses
 - [ ] Adding expenses
-- [ ] Comparing expenses in a block
+- [ ] Comparing expenses in a group
 - [ ] Improve styling on all viewports
 - [ ] More... 
