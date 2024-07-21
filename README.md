@@ -13,5 +13,6 @@ This is what Ratio is supposed to do, but for free.
 - [x] Reading expenses
 - [ ] Adding expenses
 - [ ] Comparing expenses in a group
+- [ ] Add redirect after log in in case of not being redirected there
 - [ ] Improve styling on all viewports
 - [ ] More... 
