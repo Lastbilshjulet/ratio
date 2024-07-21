@@ -11,7 +11,7 @@ This is what Ratio is supposed to do, but for free.
 - [x] Create a group where expenses can be added and shared
 - [x] Allow other users to join groups
 - [x] Reading expenses
-- [ ] Adding expenses
+- [x] Adding expenses
 - [ ] Comparing expenses in a group
 - [ ] Add redirect after log in in case of not being redirected there
 - [ ] Improve styling on all viewports
