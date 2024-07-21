@@ -36,7 +36,7 @@ const router = createBrowserRouter(
 			element: <PrivateRoute component={GroupsDashboard} />
 		},
 		{
-			path: "/groups/:name",
+			path: "/groups/:groupId",
 			element: <PrivateRoute component={GroupDetails} />
 		},
 		{

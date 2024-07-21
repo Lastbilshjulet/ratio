@@ -13,7 +13,7 @@ function GroupsDashboard() {
 	const [error, setError] = useState("");
 
 	const fetchGroups = async () => {
-		const q = query(collection(db, "groups"), where("members", "array-contains", currentUser.uid));
+		const q = query(collection(db, "groups"), where("memberIds", "array-contains", currentUser.uid));
 		await getDocs(q)
 			.then((querySnapshot) => {
 				const newData = querySnapshot.docs
@@ -43,15 +43,20 @@ function GroupsDashboard() {
 			<NavBar activeTab="groups"></NavBar>
 			<div className="grid place-content-center gap-4 mt-24">
 				{
-					loading ? <InfinitySpin
-						visible={loading}
-						width="100"
-						color="#f97316"
-						ariaLabel="infinity-spin-loading"
-					/>
-						: groups.map(group => (
-				        <GroupItem key={group.id} name={group.name}></GroupItem>
-						))
+					currentUser.displayName === ""
+						? <p>You need to add a display name to your account before joining or creating groups. </p>
+						: (
+							loading
+								? <InfinitySpin
+									visible={loading}
+									width="100"
+									color="#f97316"
+									ariaLabel="infinity-spin-loading"
+								/>
+								: groups.map(group => (
+									<GroupItem key={group.id} group={group}></GroupItem>
+								))
+						)
 				}
 				<div className="text-sm text-red-500 text-center mt-[-10px]">
 					<p className={ error ? "visible" : "hidden" }>
