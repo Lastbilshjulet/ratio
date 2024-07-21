@@ -9,7 +9,6 @@ function PrivateRoute({ component: Component }) {
 		<>
 			{currentUser ? <Component /> : <Navigate to="/login" />}
 		</>
-
 	);
 }
 

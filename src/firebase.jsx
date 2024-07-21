@@ -1,12 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-// TODO: Add SDKs for Firebase products that you want to use
-
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
+if (import.meta.env.VITE_APP_DEV) {
+	self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+}
 
 const app = initializeApp({
 	apiKey: import.meta.env.VITE_APP_API_KEY,
@@ -26,4 +25,5 @@ const appCheck = initializeAppCheck(
 );
 
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 export default appCheck;

@@ -14,9 +14,6 @@ function Login() {
 	async function handleSubmit(e) {
 		e.preventDefault();
 
-		if (password.length < 16)
-			return setError("Password is too short");
-
 		try {
 			setLoading(true);
 			setError("");
