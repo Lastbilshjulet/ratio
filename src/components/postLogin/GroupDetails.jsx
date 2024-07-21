@@ -29,6 +29,10 @@ function GroupDetails() {
 		}
 	};
 
+	const handleCopyInviteLinkClick = async () => {
+		navigator.clipboard.writeText(window.location.href + "/join");
+	};
+
 	useEffect(() => {
 		fetchGroup();
 	}, []);
@@ -45,6 +49,13 @@ function GroupDetails() {
 						ariaLabel="infinity-spin-loading"
 					/>
 						: <div>
+							<button
+								onClick={handleCopyInviteLinkClick}
+								className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
+                                    disabled:bg-orange-200 hover:disabled:bg-orange-200"
+							>
+                                Copy invite link
+							</button>
 							<p>Name: {group.name}</p>
 							{
 								group.members.length > 1
