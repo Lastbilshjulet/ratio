@@ -16,7 +16,7 @@ function GroupDetails() {
 	const fetchGroup = async () => {
 		const docSnap = await getDoc(doc(db, "groups", groupId))
 			.catch((e) => {
-				console.log(e);
+				console.log(e.message);
 				setError("Something went wrong when fetching this group, you might not have permission. ");
 			});
 		setLoading(false);
