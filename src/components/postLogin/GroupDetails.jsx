@@ -59,10 +59,9 @@ function GroupDetails() {
 							<p>Name: {group.name}</p>
 							{
 								group.members.length > 1
-									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).join(", ")}</p>
+									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
 									: <></>
 							}
-
 						</div>
 				}
 			</div>
