@@ -1,0 +1,156 @@
+import { useAuth } from "../../../contexts/AuthContext";
+import { useState } from "react";
+
+function AddExpenseModal({ open, onClose, group, fetchExpenses }) {
+	const { currentUser } = useAuth();
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [category, setCategory] = useState("");
+	const [paid, setPaid] = useState("");
+	const [currency, setCurrency] = useState("SEK");
+	const [amount, setAmount] = useState();
+
+	async function handleSubmit(e) {
+		e.preventDefault();
+		setLoading(true);
+		setError("");
+
+		// TODO: Validate input
+
+		try {
+			fetchExpenses();
+			onClose();
+		} catch(e) {
+			console.log(e.message);
+			setError("Failed to create expense");
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	const toggleClose = () => {
+		onClose();
+	};
+
+	const stopClose = (e) => {
+		e.stopPropagation();
+	};
+
+	const isNumeric = (str) => {
+		return !isNaN(str) && !isNaN(parseFloat(str));
+	};
+
+	return (
+		<div
+			onClick={toggleClose}
+			className={"fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-30 dark:bg-opacity-70 grid place-items-center " + (open ? "visible" : "hidden")}
+		>
+			<div
+			    onClick={stopClose}
+				className="w-96 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
+			>
+				{
+					!open ? <></>
+						: <form className="flex flex-col gap-4 px-16 py-8" onSubmit={handleSubmit}>
+							<h1 className="text-2xl dark:text-white text-center mb-4">
+                                Add new expense
+							</h1>
+							<label className="dark:text-white">
+                                Expense name: <br />
+								<input
+									name="name"
+									type="text"
+									className="w-full p-2 border border-black rounded-md dark:text-black"
+								/>
+							</label>
+							<label className="dark:text-white">
+                                Expense category: <br />
+								<select
+									name="category"
+									id="category"
+									value={category}
+									onChange={(e) => setCategory(e.target.value)}
+									className="w-full p-2 border border-black rounded-md dark:text-black"
+								>
+									<option value="transport">Transport</option>
+									<option value="accomodation">Accomodation</option>
+									<option value="Food">Food</option>
+									<option value="drinks">Drinks</option>
+									<option value="miscellaneous">Miscellaneous</option>
+								</select>
+							</label>
+							<label className="dark:text-white">
+                                Who paid? <br />
+								<select
+									name="paid"
+									id="paid"
+									value={paid}
+									onChange={(e) => setPaid(e.target.value)}
+									className="w-full p-2 border border-black rounded-md dark:text-black"
+								>
+									<option value="">-- Please select --</option>
+									{
+										group.members.map(m => <option key={ m.uid } value={JSON.stringify(m)}>{ m.name }</option>)
+									}
+								</select>
+							</label>
+							<label className="dark:text-white hidden">
+                                Currency: <br />
+								<select
+									name="currency"
+									id="currency"
+									value={currency}
+									onChange={(e) => setCurrency(e.target.value)}
+									className="w-full p-2 border border-black rounded-md dark:text-black"
+								>
+									<option value="SEK">SEK</option>
+								</select>
+							</label>
+							<label className="dark:text-white">
+                                Amount: <br />
+								<input
+									type="text"
+									value={amount}
+									onChange={(e) => setAmount(e.target.value)}
+									className="w-full p-2 border border-black rounded-md dark:text-black"
+								/>
+							</label>
+							{
+								!isNumeric(amount)
+									? <p>The amount must be a number</p>
+									: <div>
+										{
+											group.members.map(m =>
+												<label key={m.uid} className="w-full dark:text-white flex justify-between items-center">
+													{m.name}:
+													<input
+														name={ m.uid + "-participation" }
+														type="text"
+														className="w-16 p-2 border border-black rounded-md dark:text-black"
+													/>
+												</label>
+											)
+										}
+									</div>
+							}
+							<button
+								type="submit"
+								disabled={loading || !currentUser}
+								className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
+                                    disabled:bg-orange-200 hover:disabled:bg-orange-200"
+							>
+                                Add expense
+							</button>
+							<div className="text-sm text-red-500 text-center mt-[-10px]">
+								<p className={ error ? "visible" : "hidden" }>
+									{error}
+								</p>
+							</div>
+						</form>
+				}
+			</div>
+		</div>
+	);
+}
+
+export default AddExpenseModal;
