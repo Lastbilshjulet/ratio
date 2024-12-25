@@ -16,6 +16,12 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 			setLoading(true);
 			setError("");
 
+			if (groupName === "") {
+				setError("Group name cannot be empty");
+				setLoading(false);
+				return;
+			}
+
 			const groupData = {
 				name: groupName,
 				memberIds: [currentUser.uid],
@@ -36,6 +42,7 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 			setError("Failed to create group");
 		} finally {
 			setLoading(false);
+			setGroupName("");
 		}
 	}
 
@@ -54,9 +61,9 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 		>
 			<div
 			    onClick={stopClose}
-				className="w-96 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
+				className="w-[calc(100%-2rem)] max-w-screen-sm p-4 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
 			>
-				<form className="flex flex-col gap-4 px-16 py-8" onSubmit={handleSubmit}>
+				<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 					<h1 className="text-2xl dark:text-white text-center mb-4">
                         Create new group
 					</h1>

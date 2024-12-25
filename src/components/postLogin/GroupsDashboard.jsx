@@ -47,7 +47,7 @@ function GroupsDashboard() {
 	return (
 		<div className="h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab="groups"></NavBar>
-			<div className="grid place-content-center gap-8 mt-24">
+			<div className="w-screen p-4 max-w-screen-md flex flex-col m-auto gap-4">
 				<button
 					onClick={handleOpenCreateGroupModal}
 					disabled={loading}
@@ -56,7 +56,7 @@ function GroupsDashboard() {
 				>
                     Create new group
 				</button>
-				<div className="w-64 flex flex-col gap-4">
+				<div className="flex flex-col gap-4">
 					{
 						currentUser.displayName === ""
 							? <p>You need to add a display name to your account before joining or creating groups. </p>

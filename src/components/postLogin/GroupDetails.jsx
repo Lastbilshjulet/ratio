@@ -74,7 +74,7 @@ function GroupDetails() {
 	return (
 		<div className="h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab="groups"></NavBar>
-			<div className="grid place-content-center gap-4 mt-24">
+			<div className="grid place-content-center gap-4">
 				{
 					loading ? <InfinitySpin
 						visible={loading}
@@ -82,7 +82,7 @@ function GroupDetails() {
 						color="#f97316"
 						ariaLabel="infinity-spin-loading"
 					/>
-						: <div>
+						: <div className="flex flex-col gap-4 w-screen max-w-screen-md p-4">
 							<button
 								onClick={handleCopyInviteLinkClick}
 								className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white

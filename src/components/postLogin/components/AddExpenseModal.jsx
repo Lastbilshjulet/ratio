@@ -44,6 +44,7 @@ function AddExpenseModal({ open, onClose, group, fetchExpenses }) {
 		} finally {
 			setAmount("");
 			setLoading(false);
+			setAmount("");
 		}
 	}
 
@@ -66,12 +67,12 @@ function AddExpenseModal({ open, onClose, group, fetchExpenses }) {
 		>
 			<div
 			    onClick={stopClose}
-				className="w-96 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
+				className="w-[calc(100%-2rem)] max-w-screen-sm p-4 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
 			>
 				{
 					!open ? <></>
-						: <form className="flex flex-col gap-4 px-16 py-8" onSubmit={handleSubmit}>
-							<h1 className="text-2xl dark:text-white text-center mb-4">
+						: <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+							<h1 className="text-2xl dark:text-white text-center">
                                 Add new expense
 							</h1>
 							<label className="dark:text-white">

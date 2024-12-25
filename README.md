@@ -14,5 +14,6 @@ This is what Ratio is supposed to do, but for free.
 - [x] Adding expenses
 - [ ] Comparing expenses in a group
 - [ ] Add redirect after log in in case of not being redirected there
+- [ ] Add notifications. Example for when invite link is copied
 - [ ] Improve styling on all viewports
 - [ ] More... 
