@@ -1,29 +1,48 @@
 import { useAuth } from "../../../contexts/AuthContext";
+import Expense from "../../../models/Expense";
 import { useState } from "react";
 
 function AddExpenseModal({ open, onClose, group, fetchExpenses }) {
 	const { currentUser } = useAuth();
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [category, setCategory] = useState("");
-	const [paid, setPaid] = useState("");
-	const [currency, setCurrency] = useState("SEK");
-	const [amount, setAmount] = useState();
+	const [amount, setAmount] = useState("");
 
 	async function handleSubmit(e) {
 		e.preventDefault();
 		setLoading(true);
 		setError("");
 
-		// TODO: Validate input
+		const formData = new FormData(e.target);
+		const name = formData.get("name");
+		const category = formData.get("category");
+		const paid = formData.get("paid");
+		const currency = "SEK";
+
+		const participationData = {};
+		group.members.forEach(m => {
+			participationData[m.uid] = formData.get(m.uid + "-participation");
+		});
+
+		const newExpense = new Expense(name, category, paid, currency, amount, participationData);
+		const validation = newExpense.isValid();
+
+		if (!validation.valid) {
+			console.log(validation.error);
+			setError(validation.error);
+			setLoading(false);
+			return;
+		}
 
 		try {
+			// Add expense to database
 			fetchExpenses();
 			onClose();
 		} catch(e) {
 			console.log(e.message);
 			setError("Failed to create expense");
 		} finally {
+			setAmount("");
 			setLoading(false);
 		}
 	}
@@ -68,8 +87,7 @@ function AddExpenseModal({ open, onClose, group, fetchExpenses }) {
 								<select
 									name="category"
 									id="category"
-									value={category}
-									onChange={(e) => setCategory(e.target.value)}
+									defaultValue="transport"
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
 									<option value="transport">Transport</option>
@@ -84,8 +102,6 @@ function AddExpenseModal({ open, onClose, group, fetchExpenses }) {
 								<select
 									name="paid"
 									id="paid"
-									value={paid}
-									onChange={(e) => setPaid(e.target.value)}
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
 									<option value="">-- Please select --</option>
@@ -99,8 +115,6 @@ function AddExpenseModal({ open, onClose, group, fetchExpenses }) {
 								<select
 									name="currency"
 									id="currency"
-									value={currency}
-									onChange={(e) => setCurrency(e.target.value)}
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
 									<option value="SEK">SEK</option>

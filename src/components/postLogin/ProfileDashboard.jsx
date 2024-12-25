@@ -8,7 +8,7 @@ function ProfileDashboard() {
 	const [loading, setLoading] = useState(false);
 	const [passwordError, setPasswordError] = useState("");
 	const [passwordMessage, setPasswordMessage] = useState("");
-	const [displayName, setDisplayName] = useState(currentUser.displayName);
+	const [displayName, setDisplayName] = useState(currentUser.displayName == null ? "" : currentUser.displayName);
 	const [error, setError] = useState("");
 	const [message, setMessage] = useState("");
 
