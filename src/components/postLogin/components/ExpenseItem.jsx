@@ -72,7 +72,7 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 						open={deleteExpenseModalOpen}
 						onClose={handleCloseDeleteExpenseModal}
 						groupId={group.uid}
-						expenseId={expense.id}
+						expenseId={expense.uid}
 						fetchExpenses={fetchExpenses}
 					></DeleteExpenseModal>
 				</div>

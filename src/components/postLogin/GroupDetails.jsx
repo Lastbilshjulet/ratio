@@ -52,7 +52,7 @@ function GroupDetails() {
 					.map(
 						(doc) => ({
 							...doc.data(),
-							id: doc.id
+							uid: doc.id
 						})
 					);
 				setExpenses(newData);
@@ -111,7 +111,7 @@ function GroupDetails() {
 									: <div className="flex flex-col gap-4">
 										{
 											expenses.map(expense =>
-												<ExpenseItem key={expense.id} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>
+												<ExpenseItem key={expense.uid} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>
 											)
 										}
 									</div>
