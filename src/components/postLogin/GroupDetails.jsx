@@ -7,6 +7,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import NavBar from "./components/NavBar";
 import ExpenseItem from "./components/ExpenseItem";
 import CreateExpenseModal from "./components/modals/CreateExpenseModal";
+import { ExpenseCategories } from "../../models/ExpenseCategories";
 
 function GroupDetails() {
 	let { groupId } = useParams();
@@ -14,6 +15,7 @@ function GroupDetails() {
 	const { currentUser } = useAuth();
 	const [group, setGroup] = useState({});
 	const [expenses, setExpenses] = useState([]);
+	const [categoryFilter, setCategoryFilter] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
 	const [createExpenseModalOpen, setCreateExpenseModalOpen] = useState(false);
@@ -37,7 +39,7 @@ function GroupDetails() {
 			setGroup({ ...docSnap.data(),
 				uid: docSnap.id });
 			setError("");
-			fetchGroupExpenses();
+			fetchGroupExpenses("");
 		} else {
 			console.log("docSnap does not exist");
 			navigate("/not-found", { replace: true });
@@ -85,22 +87,36 @@ function GroupDetails() {
 						color="#f97316"
 						ariaLabel="infinity-spin-loading"
 					/>
-						: <div className="flex flex-col gap-4 w-screen max-w-screen-md p-4">
+						: <div className="flex flex-col gap-4 w-screen max-w-screen-md">
 							<button
 								onClick={handleCopyInviteLinkClick}
-								className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
+								className="mx-4 mt-4 p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                                     disabled:bg-orange-200 hover:disabled:bg-orange-200"
 							>
                                 Copy invite link
 							</button>
 							<button
 								onClick={handleCreateExpenseClick}
-								className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
+								className="mx-4 p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                                     disabled:bg-orange-200 hover:disabled:bg-orange-200"
 							>
                                 Create expense
 							</button>
-							<p>Name: {group.name}</p>
+							<p className="mx-4">Name: {group.name}</p>
+							<div className="flex overflow-x-auto gap-2 px-4">
+								{
+									Object.entries(ExpenseCategories).map(([key, value]) => (
+										<button
+											key={key}
+											onClick={() => { if (categoryFilter === key) {setCategoryFilter("");} else {setCategoryFilter(key);} }}
+											className={"p-2 rounded-md font-bold dark:text-white border-2 border-orange-500 hover:bg-orange-500 hover:text-white transition "
+                                                 + "disabled:bg-orange-300 hover:disabled:bg-orange-300 my-2" + (categoryFilter === key ? " bg-orange-500 text-white" : "")}
+										>
+											{value}
+										</button>
+									))
+								}
+							</div>
 							{
 								group.members?.length > 1
 									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
@@ -108,11 +124,15 @@ function GroupDetails() {
 							}
 							{
 								expenses.length === 0 ? <></>
-									: <div className="flex flex-col gap-4">
+									: <div className="flex flex-col gap-4 mx-4">
 										{
-											expenses.map(expense =>
-												<ExpenseItem key={expense.uid} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>
-											)
+											expenses.map(expense => {
+												if (categoryFilter && categoryFilter.toLowerCase() !== expense.category.toLowerCase()) {
+													return <></>;
+												} else {
+													return <ExpenseItem key={expense.uid} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>;
+												}
+											})
 										}
 									</div>
 							}
