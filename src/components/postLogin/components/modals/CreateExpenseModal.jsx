@@ -1,15 +1,21 @@
 import { useAuth } from "../../../../contexts/AuthContext";
 import { db } from "../../../../firebase";
 import Expense from "../../../../models/Expense";
-import { useState } from "react";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { addDoc, collection, Timestamp, updateDoc, doc } from "firebase/firestore";
 import { ExpenseCategories } from "../../../../models/ExpenseCategories";
 
-function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
+function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} }) {
 	const { currentUser } = useAuth();
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [amount, setAmount] = useState("");
+
+	useEffect(() => {
+		if (expense.amount) {
+			setAmount(expense.amount);
+		}
+	}, []);
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -19,7 +25,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 		const formData = new FormData(e.target);
 		const name = formData.get("name");
 		const category = formData.get("category");
-		const paid = JSON.parse(formData.get("paid"));
+		const paid = formData.get("paid");
 		const currency = "SEK";
 
 		const participationData = {};
@@ -38,7 +44,6 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 		}
 
 		try {
-			console.log("Creating expense");
 			const docExpense = {
 				name: newExpense.name,
 				category: newExpense.category,
@@ -49,7 +54,13 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 				createdAt: Timestamp.now(),
 				updatedAt: Timestamp.now()
 			};
-			await addDoc(collection(db, "groups", group.uid, "expenses"), docExpense);
+			if (expense.uid) {
+				console.log("Editing expense");
+				await updateDoc(doc(db, "groups", group.uid, "expenses", expense.uid), docExpense);
+			} else {
+				console.log("Creating expense");
+				await addDoc(collection(db, "groups", group.uid, "expenses"), docExpense);
+			}
 			fetchExpenses();
 			onClose();
 		} catch(e) {
@@ -87,13 +98,14 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 					!open ? <></>
 						: <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 							<h1 className="text-2xl dark:text-white text-center">
-                                Create new expense
+								{expense.uid ? "Edit" : "Create new"} expense
 							</h1>
 							<label className="dark:text-white">
                                 Expense name: <br />
 								<input
 									name="name"
 									type="text"
+									defaultValue={expense.name ? expense.name : ""}
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								/>
 							</label>
@@ -102,7 +114,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 								<select
 									name="category"
 									id="category"
-									defaultValue="transport"
+									defaultValue={expense.category ? expense.category.toLowerCase() : "transport"}
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
 									{
@@ -117,11 +129,12 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 								<select
 									name="paid"
 									id="paid"
+									defaultValue={expense.paid ? expense.paid : "" }
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
 									<option value="">-- Please select --</option>
 									{
-										group.members.map(m => <option key={ m.uid } value={JSON.stringify(m)}>{ m.name }</option>)
+										group.members.map(m => <option key={ m.uid } value={m.uid}>{ m.name }</option>)
 									}
 								</select>
 							</label>
@@ -130,6 +143,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 								<select
 									name="currency"
 									id="currency"
+									defaultValue={expense.currency ? expense.currency : ""}
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
 									<option value="SEK">SEK</option>
@@ -153,7 +167,8 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 												<label key={m.uid} className="w-full dark:text-white flex justify-between items-center">
 													{m.name}:
 													<input
-														name={ m.uid + "-participation" }
+														name={m.uid + "-participation"}
+														defaultValue={expense.participation ? expense.participation[m.uid] : ""}
 														type="text"
 														className="w-16 p-2 border border-black rounded-md dark:text-black"
 													/>
@@ -168,7 +183,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 								className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                                     disabled:bg-orange-200 hover:disabled:bg-orange-200"
 							>
-								{loading ? "Creating..." : "Create Expense"}
+								{expense.uid ? (loading ? "Editing..." : "Edit expense") : (loading ? "Creating..." : "Create expense")}
 							</button>
 							<div className="text-sm text-red-500 text-center">
 								<p className={ error ? "visible" : "hidden" }>

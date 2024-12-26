@@ -1,14 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { ExpenseCategories } from "../../../models/ExpenseCategories";
 import DeleteExpenseModal from "./modals/DeleteExpenseModal";
+import CreateExpenseModal from "./modals/CreateExpenseModal";
 
 function ExpenseItem({ expense, group, fetchExpenses }) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [deleteExpenseModalOpen, setDeleteExpenseModalOpen] = useState(false);
+	const [editExpenseModalOpen, setEditExpenseModalOpen] = useState(false);
 	const contentRef = useRef(null);
 
 	const handleOpenDeleteExpenseModal = () => setDeleteExpenseModalOpen(true);
 	const handleCloseDeleteExpenseModal = () => setDeleteExpenseModalOpen(false);
+
+	const handleOpenEditExpenseModal = () => setEditExpenseModalOpen(true);
+	const handleCloseEditExpenseModal = () => setEditExpenseModalOpen(false);
 
 	const toggleExpand = () => {
 		setIsExpanded(!isExpanded);
@@ -20,7 +25,7 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 
 	const handleEdit = (e) => {
 		e.stopPropagation();
-		console.log("Edit button clicked");
+		handleOpenEditExpenseModal();
 	};
 
 	const handleDelete = (e) => {
@@ -56,7 +61,6 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 				</div>
 			</div>
 			{isExpanded && (
-
 				<div
 					ref={contentRef}
 					onClick={stopPropagation}
@@ -65,7 +69,7 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 					style={{ height: "0px" }}
 				>
 					<p><strong>Category:</strong> {ExpenseCategories[expense.category.toUpperCase()]}</p>
-					<p><strong>Paid by:</strong> {expense.paid.name}</p>
+					<p><strong>Paid by:</strong> {getUserName(expense.paid)}</p>
 					<p><strong>Amount:</strong> {expense.amount} {expense.currency}</p>
 					<p><strong>Participation:</strong></p>
 					<ul>
@@ -94,8 +98,14 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 						expenseId={expense.uid}
 						fetchExpenses={fetchExpenses}
 					></DeleteExpenseModal>
+					<CreateExpenseModal
+						open={editExpenseModalOpen}
+						onClose={handleCloseEditExpenseModal}
+						group={group}
+						fetchExpenses={fetchExpenses}
+						expense={expense}
+					></CreateExpenseModal>
 				</div>
-
 			)}
 		</div>
 	);
