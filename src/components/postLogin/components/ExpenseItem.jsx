@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { ExpenseCategories } from "../../../models/ExpenseCategories";
+import DeleteExpenseModal from "./modals/DeleteExpenseModal";
 
-function ExpenseItem({ expense, group }) {
+function ExpenseItem({ expense, group, fetchExpenses }) {
 	const [isExpanded, setIsExpanded] = useState(false);
+	const [deleteExpenseModalOpen, setDeleteExpenseModalOpen] = useState(false);
+	const handleOpenDeleteExpenseModal = () => setDeleteExpenseModalOpen(true);
+	const handleCloseDeleteExpenseModal = () => setDeleteExpenseModalOpen(false);
 
 	const toggleExpand = () => {
 		setIsExpanded(!isExpanded);
@@ -19,7 +23,7 @@ function ExpenseItem({ expense, group }) {
 
 	const handleDelete = (e) => {
 		e.stopPropagation();
-		console.log("Delete button clicked");
+		handleOpenDeleteExpenseModal();
 	};
 
 	const getUserName = (uid) => {
@@ -64,7 +68,15 @@ function ExpenseItem({ expense, group }) {
 					>
                         Delete expense
 					</button>
+					<DeleteExpenseModal
+						open={deleteExpenseModalOpen}
+						onClose={handleCloseDeleteExpenseModal}
+						groupId={group.uid}
+						expenseId={expense.id}
+						fetchExpenses={fetchExpenses}
+					></DeleteExpenseModal>
 				</div>
+
 			)}
 		</div>
 	);

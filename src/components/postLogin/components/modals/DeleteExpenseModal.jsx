@@ -8,7 +8,7 @@ function DeleteExpenseModal({ open, onClose, groupId, expenseId, fetchExpenses }
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	async function handleSubmit(e) {
+	async function handleDelete(e) {
 		e.preventDefault();
 
 		try {
@@ -43,12 +43,12 @@ function DeleteExpenseModal({ open, onClose, groupId, expenseId, fetchExpenses }
 				onClick={stopClose}
 				className="w-[calc(100%-2rem)] max-w-screen-sm p-4 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
 			>
-				<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+				<div className="flex flex-col gap-4">
 					<h1 className="text-2xl dark:text-white text-center mb-4">
                         Are you sure you want to delete this expense?
 					</h1>
 					<button
-						type="submit"
+				        onClick={handleDelete}
 						disabled={loading || !currentUser}
 						className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                             disabled:bg-orange-200 hover:disabled:bg-orange-200"
@@ -56,7 +56,7 @@ function DeleteExpenseModal({ open, onClose, groupId, expenseId, fetchExpenses }
                         Yes
 					</button>
 					<button
-						type="submit"
+			            onClick={toggleClose}
 						disabled={loading || !currentUser}
 						className="p-2 rounded-md font-bold text-white bg-red-500 hover:bg-red-400 transition hover:dark:bg-red-600 hover:dark:text-white
                             disabled:bg-red-200 hover:disabled:bg-red-200"
@@ -68,7 +68,7 @@ function DeleteExpenseModal({ open, onClose, groupId, expenseId, fetchExpenses }
 							{error}
 						</p>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	);
