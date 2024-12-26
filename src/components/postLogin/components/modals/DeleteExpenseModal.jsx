@@ -1,11 +1,10 @@
-import { useAuth } from "../../../contexts/AuthContext";
-import { db } from "../../../firebase";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { db } from "../../../../firebase";
 import { useState } from "react";
-import { addDoc, collection, Timestamp, updateDoc, doc, arrayUnion } from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 
-function CreateGroupModal({ open, onClose, fetchGroups }) {
+function DeleteExpenseModal({ open, onClose, groupId, expenseId, fetchExpenses }) {
 	const { currentUser } = useAuth();
-	const [groupName, setGroupName] = useState("");
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 
@@ -15,38 +14,15 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 		try {
 			setLoading(true);
 			setError("");
+			await deleteDoc(doc(db, "groups", groupId, "expenses", expenseId));
 
-			if (groupName === "") {
-				setError("Group name cannot be empty");
-				setLoading(false);
-				return;
-			}
-
-			const groupData = {
-				name: groupName,
-				memberIds: [currentUser.uid],
-				members: [
-					{
-						uid: currentUser.uid,
-						name: currentUser.displayName
-					}
-				],
-				createdAt: Timestamp.now()
-			};
-			const groupRef = await addDoc(collection(db, "groups"), groupData);
-			const userRef = doc(db, "users", currentUser.uid);
-			await updateDoc(userRef, {
-				groups: arrayUnion(groupRef.id)
-			});
-
-			fetchGroups();
+			fetchExpenses();
 			onClose();
 		} catch(e) {
 			console.log(e.message);
-			setError("Failed to create group");
+			setError("Failed to delete expense");
 		} finally {
 			setLoading(false);
-			setGroupName("");
 		}
 	}
 
@@ -64,29 +40,28 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 			className={"fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-30 dark:bg-opacity-70 grid place-items-center " + (open ? "visible" : "hidden")}
 		>
 			<div
-			    onClick={stopClose}
+				onClick={stopClose}
 				className="w-[calc(100%-2rem)] max-w-screen-sm p-4 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
 			>
 				<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
 					<h1 className="text-2xl dark:text-white text-center mb-4">
-                        Create new group
+                        Are you sure you want to delete this expense?
 					</h1>
-					<label className="dark:text-white">
-                        Group name: <br />
-						<input
-							type="text"
-							value={groupName}
-							onChange={(e) => setGroupName(e.target.value)}
-							className="w-full p-2 border border-black rounded-md dark:text-black"
-						/>
-					</label>
 					<button
 						type="submit"
 						disabled={loading || !currentUser}
 						className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                             disabled:bg-orange-200 hover:disabled:bg-orange-200"
 					>
-                        Create group
+                        Yes
+					</button>
+					<button
+						type="submit"
+						disabled={loading || !currentUser}
+						className="p-2 rounded-md font-bold text-white bg-red-500 hover:bg-red-400 transition hover:dark:bg-red-600 hover:dark:text-white
+                            disabled:bg-red-200 hover:disabled:bg-red-200"
+					>
+                        No
 					</button>
 					<div className="text-sm text-red-500 text-center mt-[-10px]">
 						<p className={ error ? "visible" : "hidden" }>
@@ -99,4 +74,4 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 	);
 }
 
-export default CreateGroupModal;
+export default DeleteExpenseModal;

@@ -1,6 +1,6 @@
 import NavBar from "./components/NavBar";
 import GroupItem from "./components/GroupItem";
-import CreateGroupModal from "./components/CreateGroupModal";
+import CreateGroupModal from "./components/modals/CreateGroupModal";
 import { useAuth } from "../../contexts/AuthContext";
 import { db } from "../../firebase";
 import { useState, useEffect } from "react";

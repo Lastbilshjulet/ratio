@@ -52,8 +52,8 @@ function ExpenseItem({ expense, group }) {
 					</ul>
 					<button
 						onClick={handleEdit}
-						className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
-                            disabled:bg-orange-200 hover:disabled:bg-orange-200 mb-2"
+						className="p-2 rounded-md font-bold dark:text-white border-2 border-orange-500 hover:bg-orange-500 hover:text-white transition
+                            disabled:bg-orange-300 hover:disabled:bg-orange-300 my-2"
 					>
                         Edit expense
 					</button>

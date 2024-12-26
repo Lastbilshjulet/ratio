@@ -6,7 +6,7 @@ import { db } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
 import NavBar from "./components/NavBar";
 import ExpenseItem from "./components/ExpenseItem";
-import CreateExpenseModal from "./components/CreateExpenseModal";
+import CreateExpenseModal from "./components/modals/CreateExpenseModal";
 
 function GroupDetails() {
 	let { groupId } = useParams();

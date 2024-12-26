@@ -1,9 +1,9 @@
-import { useAuth } from "../../../contexts/AuthContext";
-import { db } from "../../../firebase";
-import Expense from "../../../models/Expense";
+import { useAuth } from "../../../../contexts/AuthContext";
+import { db } from "../../../../firebase";
+import Expense from "../../../../models/Expense";
 import { useState } from "react";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
-import { ExpenseCategories } from "../../../models/ExpenseCategories";
+import { ExpenseCategories } from "../../../../models/ExpenseCategories";
 
 function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 	const { currentUser } = useAuth();
