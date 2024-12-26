@@ -3,6 +3,7 @@ import { db } from "../../../firebase";
 import Expense from "../../../models/Expense";
 import { useState } from "react";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { ExpenseCategories } from "../../../models/ExpenseCategories";
 
 function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 	const { currentUser } = useAuth();
@@ -104,11 +105,11 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses }) {
 									defaultValue="transport"
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
-									<option value="transport">Transport</option>
-									<option value="accomodation">Accomodation</option>
-									<option value="Food">Food</option>
-									<option value="drinks">Drinks</option>
-									<option value="miscellaneous">Miscellaneous</option>
+									{
+										Object.entries(ExpenseCategories).map(([key, value]) => (
+											<option key={key} value={key.toLowerCase()}>{value}</option>
+										))
+									}
 								</select>
 							</label>
 							<label className="dark:text-white">
