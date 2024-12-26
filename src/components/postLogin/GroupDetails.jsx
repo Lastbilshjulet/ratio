@@ -111,7 +111,7 @@ function GroupDetails() {
 									: <div className="flex flex-col gap-4">
 										{
 											expenses.map(expense =>
-												<ExpenseItem key={expense.id} expense={expense}></ExpenseItem>
+												<ExpenseItem key={expense.id} expense={expense} group={group}></ExpenseItem>
 											)
 										}
 									</div>
