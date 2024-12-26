@@ -8,7 +8,7 @@ function ProfileDashboard() {
 	const [loading, setLoading] = useState(false);
 	const [passwordError, setPasswordError] = useState("");
 	const [passwordMessage, setPasswordMessage] = useState("");
-	const [displayName, setDisplayName] = useState(currentUser.displayName);
+	const [displayName, setDisplayName] = useState(currentUser.displayName == null ? "" : currentUser.displayName);
 	const [error, setError] = useState("");
 	const [message, setMessage] = useState("");
 
@@ -44,7 +44,7 @@ function ProfileDashboard() {
 	return (
 		<div className="h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab="profile"></NavBar>
-			<div className="grid place-content-center gap-4 mt-24">
+			<div className="w-screen p-4 max-w-screen-md flex flex-col m-auto gap-4">
 				<form className="flex flex-col gap-4" onSubmit={handleProfileDetails}>
 					{
 						message && <div className="p-4 rounded-md bg-green-400 text-gray-800">

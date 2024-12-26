@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
 import { db } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
 
 function JoinGroupRedirect() {
@@ -28,6 +27,12 @@ function JoinGroupRedirect() {
 						)
 					}
 				);
+
+				const userRef = doc(db, "users", currentUser.uid);
+				await updateDoc(userRef, {
+					groups: arrayUnion(groupId)
+				});
+
 			    navigate("/", { replace: true });
 			} catch (e) {
 				console.log(e.message);
@@ -43,7 +48,7 @@ function JoinGroupRedirect() {
 	return (
 		<div className="h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab=""></NavBar>
-			<div className="grid place-content-center gap-4 mt-24">
+			<div className="w-screen p-4 max-w-screen-md flex flex-col m-auto gap-4">
 				{
 					currentUser.displayName === ""
 						? <p>You need to add a display name to your account before joining or creating groups. </p>

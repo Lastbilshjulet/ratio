@@ -10,12 +10,17 @@ import GroupsDashboard from "./postLogin/GroupsDashboard";
 import JoinGroupRedirect from "./postLogin/JoinGroupRedirect";
 import GroupDetails from "./postLogin/GroupDetails";
 import FallbackComponent from "./FallbackComponent";
+import NotFoundComponent from "./NotFoundComponent";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import ForgotPassword from "./preLogin/ForgotPassword";
 
 const router = createBrowserRouter(
 	[
+		{
+			path: "/not-found",
+			element: <NotFoundComponent />
+		},
 		{
 			path: "/signup",
 			element: <PublicRoute component={SignUp} />

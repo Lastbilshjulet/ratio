@@ -10,7 +10,12 @@ This is what Ratio is supposed to do, but for free.
 - [x] Signup and Login with email and password
 - [x] Create a group where expenses can be added and shared
 - [x] Allow other users to join groups
-- [ ] Adding expenses
-- [ ] Comparing expenses in a block
+- [x] Reading expenses
+- [x] Creating expenses
+- [ ] Filter out expenses within group
+- [ ] Improve participation by allowing percentages and exclusions of users
+- [ ] Comparing expenses in a group
+- [ ] Add redirect after log in in case of not being redirected there
+- [ ] Add notifications. Example for when invite link is copied
 - [ ] Improve styling on all viewports
 - [ ] More... 
