@@ -51,7 +51,6 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 				currency: newExpense.currency,
 				amount: newExpense.amount,
 				participation: newExpense.participation,
-				createdAt: Timestamp.now(),
 				updatedAt: Timestamp.now()
 			};
 			if (expense.uid) {
@@ -59,6 +58,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 				await updateDoc(doc(db, "groups", group.uid, "expenses", expense.uid), docExpense);
 			} else {
 				console.log("Creating expense");
+				docExpense.createdAt = Timestamp.now();
 				await addDoc(collection(db, "groups", group.uid, "expenses"), docExpense);
 			}
 			fetchExpenses();

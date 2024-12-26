@@ -38,6 +38,11 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 		return user ? user.name : "Unknown";
 	};
 
+	const formatDate = (timestamp) => {
+		const date = timestamp.toDate();
+		return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+	};
+
 	useEffect(() => {
 		if (contentRef.current) {
 			if (isExpanded) {
@@ -91,6 +96,9 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 					>
                         Delete expense
 					</button>
+					<p className="text-gray-500 text-sm"><i>
+						{formatDate(expense.updatedAt)}
+					</i></p>
 					<DeleteExpenseModal
 						open={deleteExpenseModalOpen}
 						onClose={handleCloseDeleteExpenseModal}
