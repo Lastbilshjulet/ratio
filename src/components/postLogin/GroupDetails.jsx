@@ -103,6 +103,11 @@ function GroupDetails() {
                                 Create expense
 							</button>
 							<p className="mx-4">Name: {group.name}</p>
+							{
+								group.members?.length > 1
+									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
+									: <></>
+							}
 							<div className="flex overflow-x-auto gap-2 px-4">
 								{
 									Object.entries(ExpenseCategories).map(([key, value]) => (
@@ -117,11 +122,6 @@ function GroupDetails() {
 									))
 								}
 							</div>
-							{
-								group.members?.length > 1
-									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
-									: <></>
-							}
 							{
 								expenses.length === 0 ? <></>
 									: <div className="flex flex-col gap-4 mx-4">
