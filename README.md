@@ -11,7 +11,9 @@ This is what Ratio is supposed to do, but for free.
 - [x] Create a group where expenses can be added and shared
 - [x] Allow other users to join groups
 - [x] Reading expenses
-- [x] Adding expenses
+- [x] Creating expenses
+- [ ] Filter out expenses within group
+- [ ] Improve participation by allowing percentages and exclusions of users
 - [ ] Comparing expenses in a group
 - [ ] Add redirect after log in in case of not being redirected there
 - [ ] Add notifications. Example for when invite link is copied
