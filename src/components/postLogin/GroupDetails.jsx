@@ -1,23 +1,24 @@
 import { useState, useEffect } from "react";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
 import { db } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
 import NavBar from "./components/NavBar";
 import ExpenseItem from "./components/ExpenseItem";
-import AddExpenseModal from "./components/AddExpenseModal";
+import CreateExpenseModal from "./components/CreateExpenseModal";
 
 function GroupDetails() {
 	let { groupId } = useParams();
+	const navigate = useNavigate();
 	const { currentUser } = useAuth();
 	const [group, setGroup] = useState({});
 	const [expenses, setExpenses] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
-	const [addCreateModalOpen, setAddExpenseModalOpen] = useState(false);
-	const handleOpenAddExpenseModal = () => setAddExpenseModalOpen(true);
-	const handleCloseAddExpenseModal = () => setAddExpenseModalOpen(false);
+	const [createExpenseModalOpen, setCreateExpenseModalOpen] = useState(false);
+	const handleOpenCreateExpenseModal = () => setCreateExpenseModalOpen(true);
+	const handleCloseCreateExpenseModal = () => setCreateExpenseModalOpen(false);
 
 	useEffect(() => {
 		fetchGroup();
@@ -28,16 +29,18 @@ function GroupDetails() {
 		const docSnap = await getDoc(doc(db, "groups", groupId))
 			.catch((e) => {
 				console.log(e.message);
-				setError("Something went wrong when fetching this group, you might not have permission. ");
+			    navigate("/not-found", { replace: true });
 			});
 		setLoading(false);
 
-		if (docSnap.exists()) {
-			setGroup(docSnap.data());
+		if (docSnap && docSnap.exists()) {
+			setGroup({ ...docSnap.data(),
+				uid: docSnap.id });
 			setError("");
 			fetchGroupExpenses();
 		} else {
-			setError("No document with this id could be found. ");
+			console.log("docSnap does not exist");
+			navigate("/not-found", { replace: true });
 		}
 	};
 
@@ -67,8 +70,8 @@ function GroupDetails() {
 		navigator.clipboard.writeText(window.location.href + "/join");
 	};
 
-	const handleAddExpenseClick = async () => {
-		handleOpenAddExpenseModal();
+	const handleCreateExpenseClick = async () => {
+		handleOpenCreateExpenseModal();
 	};
 
 	return (
@@ -91,26 +94,28 @@ function GroupDetails() {
                                 Copy invite link
 							</button>
 							<button
-								onClick={handleAddExpenseClick}
+								onClick={handleCreateExpenseClick}
 								className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                                     disabled:bg-orange-200 hover:disabled:bg-orange-200"
 							>
-                                Add expense
+                                Create expense
 							</button>
 							<p>Name: {group.name}</p>
 							{
-								group.members.length > 1
+								group.members?.length > 1
 									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
 									: <></>
 							}
-							<div>
-                                Expenses:
-								{
-									expenses.map(expense =>
-										<ExpenseItem key={expense.id} expense={expense}></ExpenseItem>
-									)
-								}
-							</div>
+							{
+								expenses.length === 0 ? <></>
+									: <div className="flex flex-col gap-4">
+										{
+											expenses.map(expense =>
+												<ExpenseItem key={expense.id} expense={expense}></ExpenseItem>
+											)
+										}
+									</div>
+							}
 						</div>
 				}
 			</div>
@@ -119,7 +124,7 @@ function GroupDetails() {
 					{error}
 				</p>
 			</div>
-			<AddExpenseModal open={ addCreateModalOpen } onClose={ handleCloseAddExpenseModal } group={ group } fetchExpenses={ fetchGroupExpenses } />
+			<CreateExpenseModal open={ createExpenseModalOpen } onClose={ handleCloseCreateExpenseModal } group={ group } fetchExpenses={ fetchGroupExpenses } />
 		</div>
 	);
 }

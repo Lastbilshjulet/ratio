@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
 import { db } from "../../firebase";
 import { useAuth } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 import NavBar from "./components/NavBar";
 
 function JoinGroupRedirect() {
@@ -28,6 +27,12 @@ function JoinGroupRedirect() {
 						)
 					}
 				);
+
+				const userRef = doc(db, "users", currentUser.uid);
+				await updateDoc(userRef, {
+					groups: arrayUnion(groupId)
+				});
+
 			    navigate("/", { replace: true });
 			} catch (e) {
 				console.log(e.message);

@@ -1,7 +1,7 @@
 import { useAuth } from "../../../contexts/AuthContext";
 import { db } from "../../../firebase";
 import { useState } from "react";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { addDoc, collection, Timestamp, updateDoc, doc, arrayUnion } from "firebase/firestore";
 
 function CreateGroupModal({ open, onClose, fetchGroups }) {
 	const { currentUser } = useAuth();
@@ -33,7 +33,11 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 				],
 				createdAt: Timestamp.now()
 			};
-			await addDoc(collection(db, "groups"), groupData);
+			const groupRef = await addDoc(collection(db, "groups"), groupData);
+			const userRef = doc(db, "users", currentUser.uid);
+			await updateDoc(userRef, {
+				groups: arrayUnion(groupRef.id)
+			});
 
 			fetchGroups();
 			onClose();
