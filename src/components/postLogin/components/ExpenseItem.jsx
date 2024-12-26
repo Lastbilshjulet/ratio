@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ExpenseCategories } from "../../../models/ExpenseCategories";
 import DeleteExpenseModal from "./modals/DeleteExpenseModal";
 
 function ExpenseItem({ expense, group, fetchExpenses }) {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [deleteExpenseModalOpen, setDeleteExpenseModalOpen] = useState(false);
+	const contentRef = useRef(null);
+
 	const handleOpenDeleteExpenseModal = () => setDeleteExpenseModalOpen(true);
 	const handleCloseDeleteExpenseModal = () => setDeleteExpenseModalOpen(false);
 
@@ -31,6 +33,16 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 		return user ? user.name : "Unknown";
 	};
 
+	useEffect(() => {
+		if (contentRef.current) {
+			if (isExpanded) {
+				contentRef.current.style.height = `${contentRef.current.scrollHeight}px`;
+			} else {
+				contentRef.current.style.height = "0px";
+			}
+		}
+	}, [isExpanded]);
+
 	return (
 		<div onClick={toggleExpand} className="border border-black dark:border-white rounded-md w-full cursor-pointer">
 			<div className="flex justify-between items-center p-4">
@@ -44,7 +56,14 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 				</div>
 			</div>
 			{isExpanded && (
-				<div onClick={stopPropagation} className="flex flex-col gap-1 p-4 border-t border-black dark:border-white cursor-auto">
+
+				<div
+					ref={contentRef}
+					onClick={stopPropagation}
+					className="overflow-hidden transition-height duration-300 ease-in-out
+                        flex flex-col gap-1 p-4 border-t border-black dark:border-white cursor-auto"
+					style={{ height: "0px" }}
+				>
 					<p><strong>Category:</strong> {ExpenseCategories[expense.category.toUpperCase()]}</p>
 					<p><strong>Paid by:</strong> {expense.paid.name}</p>
 					<p><strong>Amount:</strong> {expense.amount} {expense.currency}</p>
