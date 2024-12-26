@@ -43,7 +43,6 @@ function GroupDetails() {
 				console.log(e.message);
 			    navigate("/not-found", { replace: true });
 			});
-		setLoading(false);
 
 		if (docSnap && docSnap.exists()) {
 			setGroup({ ...docSnap.data(),
@@ -57,7 +56,6 @@ function GroupDetails() {
 	};
 
 	const fetchGroupExpenses = async () => {
-		setLoading(true);
 		await getDocs(collection(doc(db, "groups", groupId), "expenses"))
 			.then((querySnapshot) => {
 				const newData = querySnapshot.docs
@@ -118,7 +116,7 @@ function GroupDetails() {
 									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
 									: <></>
 							}
-							<div className="flex overflow-x-auto gap-2 px-4">
+							<div className="flex overflow-x-auto gap-2 px-4 scrollbar-hide">
 								{
 									Object.entries(ExpenseCategories).map(([key, value]) => (
 										<button
@@ -155,16 +153,13 @@ function GroupDetails() {
 							<div className="mt-[-1rem] flex overflow-x-auto scroll-snap-x mandatory scrollbar-hide">
 								<div ref={expensesRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
 									{
-										expenses.length === 0 ? <></>
+										expenses.filter(e => categoryFilter ? (categoryFilter.toLowerCase() === e.category.toLowerCase()) : true).length === 0
+											? <p className="dark:text-white text-center">No expenses found</p>
 											: <div className="flex flex-col gap-4">
 												{
-													expenses.map(expense => {
-														if (categoryFilter && categoryFilter.toLowerCase() !== expense.category.toLowerCase()) {
-															return <></>;
-														} else {
-															return <ExpenseItem key={expense.uid} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>;
-														}
-													})
+													expenses.filter(e => categoryFilter ? (categoryFilter.toLowerCase() === e.category.toLowerCase()) : true).map(expense =>
+														<ExpenseItem key={expense.uid} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>
+													)
 												}
 											</div>
 									}
