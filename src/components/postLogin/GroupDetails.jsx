@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
@@ -18,13 +18,23 @@ function GroupDetails() {
 	const [categoryFilter, setCategoryFilter] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
+	const [activeTab, setActiveTab] = useState("expenses");
 	const [createExpenseModalOpen, setCreateExpenseModalOpen] = useState(false);
 	const handleOpenCreateExpenseModal = () => setCreateExpenseModalOpen(true);
 	const handleCloseCreateExpenseModal = () => setCreateExpenseModalOpen(false);
 
+	const expensesRef = useRef(null);
+	const standingsRef = useRef(null);
+	const paymentsRef = useRef(null);
+
 	useEffect(() => {
 		fetchGroup();
 	}, []);
+
+	const handleTabClick = (tab, ref) => {
+		setActiveTab(tab);
+		ref.current.scrollIntoView({ behavior: "smooth" });
+	};
 
 	const fetchGroup = async () => {
 		setLoading(true);
@@ -122,20 +132,50 @@ function GroupDetails() {
 									))
 								}
 							</div>
-							{
-								expenses.length === 0 ? <></>
-									: <div className="flex flex-col gap-4 mx-4">
-										{
-											expenses.map(expense => {
-												if (categoryFilter && categoryFilter.toLowerCase() !== expense.category.toLowerCase()) {
-													return <></>;
-												} else {
-													return <ExpenseItem key={expense.uid} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>;
+							<div className="flex w-screen max-w-screen-md md:px-4">
+								<div
+									className={`w-1/3 text-center cursor-pointer ${activeTab === "expenses" ? "border-b-4 border-orange-500" : ""}`}
+									onClick={() => handleTabClick("expenses", expensesRef)}
+								>
+									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(expensesRef)}>Expenses</h2>
+								</div>
+								<div
+									className={`w-1/3 text-center cursor-pointer ${activeTab === "standings" ? "border-b-4 border-orange-500" : ""}`}
+									onClick={() => handleTabClick("standings", standingsRef)}
+								>
+									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(standingsRef)}>Standings</h2>
+								</div>
+								<div
+									className={`w-1/3 text-center cursor-pointer ${activeTab === "payments" ? "border-b-4 border-orange-500" : ""}`}
+									onClick={() => handleTabClick("payments", paymentsRef)}
+								>
+									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(paymentsRef)}>Payments</h2>
+								</div>
+							</div>
+							<div className="mt-[-1rem] flex overflow-x-auto scroll-snap-x mandatory scrollbar-hide">
+								<div ref={expensesRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
+									{
+										expenses.length === 0 ? <></>
+											: <div className="flex flex-col gap-4">
+												{
+													expenses.map(expense => {
+														if (categoryFilter && categoryFilter.toLowerCase() !== expense.category.toLowerCase()) {
+															return <></>;
+														} else {
+															return <ExpenseItem key={expense.uid} expense={expense} group={group} fetchExpenses={fetchGroupExpenses}></ExpenseItem>;
+														}
+													})
 												}
-											})
-										}
-									</div>
-							}
+											</div>
+									}
+								</div>
+								<div ref={standingsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
+                                    Standings :)
+								</div>
+								<div ref={paymentsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
+                                    Payments :)
+								</div>
+							</div>
 						</div>
 				}
 			</div>
