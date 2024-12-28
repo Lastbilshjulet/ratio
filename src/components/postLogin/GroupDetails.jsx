@@ -95,21 +95,23 @@ function GroupDetails() {
 						color="#f97316"
 						ariaLabel="infinity-spin-loading"
 					/>
-						: <div className="flex flex-col gap-4 w-screen max-w-screen-md">
-							<button
-								onClick={handleCopyInviteLinkClick}
-								className="mx-4 mt-4 p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
-                                    disabled:bg-orange-200 hover:disabled:bg-orange-200"
-							>
-                                Copy invite link
-							</button>
-							<button
-								onClick={handleCreateExpenseClick}
-								className="mx-4 p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
-                                    disabled:bg-orange-200 hover:disabled:bg-orange-200"
-							>
-                                Create expense
-							</button>
+						: <div className="flex flex-col w-screen max-w-screen-md">
+							<div className="m-4 flex flex-col sm:flex-row gap-4">
+								<button
+									onClick={handleCreateExpenseClick}
+									className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 hover:dark:bg-orange-600 hover:dark:text-white
+                                    disabled:bg-orange-200 hover:disabled:bg-orange-200 flex-1"
+								>
+                                    Create expense
+								</button>
+								<button
+									onClick={handleCopyInviteLinkClick}
+									className="p-2 rounded-md font-bold dark:text-white border-2 border-orange-500 hover:bg-orange-500 hover:text-white
+                                    disabled:bg-orange-300 hover:disabled:bg-orange-300 flex-1"
+								>
+                                    Copy invite link
+								</button>
+							</div>
 							<p className="mx-4">Name: {group.name}</p>
 							{
 								group.members?.length > 1
@@ -122,8 +124,8 @@ function GroupDetails() {
 										<button
 											key={key}
 											onClick={() => { if (categoryFilter === key) {setCategoryFilter("");} else {setCategoryFilter(key);} }}
-											className={"p-2 rounded-md font-bold dark:text-white border-2 border-orange-500 hover:bg-orange-500 hover:text-white transition "
-                                                 + "disabled:bg-orange-300 hover:disabled:bg-orange-300 my-2" + (categoryFilter === key ? " bg-orange-500 text-white" : "")}
+											className={"p-2 rounded-md font-bold dark:text-white border-2 border-orange-500 hover:bg-orange-500 hover:text-white "
+                                                 + "disabled:bg-orange-300 hover:disabled:bg-orange-300 mt-4" + (categoryFilter === key ? " bg-orange-500 text-white" : "")}
 										>
 											{value}
 										</button>
@@ -132,25 +134,25 @@ function GroupDetails() {
 							</div>
 							<div className="flex w-screen max-w-screen-md md:px-4">
 								<div
-									className={`w-1/3 text-center cursor-pointer ${activeTab === "expenses" ? "border-b-4 border-orange-500" : ""}`}
+									className={`w-1/3 pt-4 text-center cursor-pointer ${activeTab === "expenses" ? "border-b-4 border-orange-500" : ""}`}
 									onClick={() => handleTabClick("expenses", expensesRef)}
 								>
 									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(expensesRef)}>Expenses</h2>
 								</div>
 								<div
-									className={`w-1/3 text-center cursor-pointer ${activeTab === "standings" ? "border-b-4 border-orange-500" : ""}`}
+									className={`w-1/3 pt-4 text-center cursor-pointer ${activeTab === "standings" ? "border-b-4 border-orange-500" : ""}`}
 									onClick={() => handleTabClick("standings", standingsRef)}
 								>
 									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(standingsRef)}>Standings</h2>
 								</div>
 								<div
-									className={`w-1/3 text-center cursor-pointer ${activeTab === "payments" ? "border-b-4 border-orange-500" : ""}`}
+									className={`w-1/3 pt-4 text-center cursor-pointer ${activeTab === "payments" ? "border-b-4 border-orange-500" : ""}`}
 									onClick={() => handleTabClick("payments", paymentsRef)}
 								>
 									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(paymentsRef)}>Payments</h2>
 								</div>
 							</div>
-							<div className="mt-[-1rem] flex overflow-x-auto scroll-snap-x mandatory scrollbar-hide">
+							<div className="flex overflow-x-auto scroll-snap-x mandatory scrollbar-hide">
 								<div ref={expensesRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
 									{
 										expenses.filter(e => categoryFilter ? (categoryFilter.toLowerCase() === e.category.toLowerCase()) : true).length === 0
@@ -174,7 +176,7 @@ function GroupDetails() {
 						</div>
 				}
 			</div>
-			<div className="text-sm text-red-500 text-center mt-[-10px]">
+			<div className="text-sm text-red-500 text-center">
 				<p className={ error ? "visible" : "hidden" }>
 					{error}
 				</p>
