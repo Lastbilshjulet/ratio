@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { useNavigate, useParams } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
 import { db } from "../../firebase";
@@ -57,7 +57,11 @@ function GroupDetails() {
 	};
 
 	const fetchGroupExpenses = async () => {
-		await getDocs(collection(doc(db, "groups", groupId), "expenses"))
+		const q = query(
+			collection(doc(db, "groups", groupId), "expenses"),
+			orderBy("createdAt", "desc")
+		);
+		await getDocs(q)
 			.then((querySnapshot) => {
 				const newData = querySnapshot.docs
 					.map(

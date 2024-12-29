@@ -4,7 +4,7 @@ import CreateGroupModal from "./components/modals/CreateGroupModal";
 import { useAuth } from "../../contexts/AuthContext";
 import { db } from "../../firebase";
 import { useState, useEffect } from "react";
-import { query, collection, where, getDocs } from "firebase/firestore";
+import { query, collection, where, getDocs, orderBy } from "firebase/firestore";
 import { InfinitySpin } from "react-loader-spinner";
 
 function GroupsDashboard() {
@@ -18,7 +18,11 @@ function GroupsDashboard() {
 
 	const fetchGroups = async () => {
 		setLoading(true);
-		const q = query(collection(db, "groups"), where("memberIds", "array-contains", currentUser.uid));
+		const q = query(
+			collection(db, "groups"),
+			where("memberIds", "array-contains", currentUser.uid),
+			orderBy("createdAt", "desc")
+		);
 		await getDocs(q)
 			.then((querySnapshot) => {
 				const newData = querySnapshot.docs
