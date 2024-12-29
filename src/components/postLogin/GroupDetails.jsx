@@ -89,6 +89,11 @@ function GroupDetails() {
 		handleOpenCreateExpenseModal();
 	};
 
+	const getUserName = (uid) => {
+		const user = group.members.find(member => member.uid === uid);
+		return user ? user.name : "Unknown";
+	};
+
 	const getParticipationPerMember = () => {
 		const participationPerMember = {};
 
@@ -107,6 +112,81 @@ function GroupDetails() {
 	};
 
 	const participationPerMember = getParticipationPerMember();
+
+	const calculateBalances = () => {
+		const balances = {};
+
+		expenses.forEach(expense => {
+			const paidBy = expense.paid;
+			const amountPaid = parseFloat(expense.amount);
+
+			// Initialize balances for the payer if not already initialized
+			if (!balances[paidBy]) {
+				balances[paidBy] = 0;
+			}
+
+			// Subtract the total amount paid by the payer
+			balances[paidBy] -= amountPaid;
+
+			// Add the participation amounts to the respective members
+			Object.entries(expense.participation).forEach(([uid, amount]) => {
+				if (!balances[uid]) {
+					balances[uid] = 0;
+				}
+				balances[uid] += parseFloat(amount);
+			});
+		});
+
+		return balances;
+	};
+
+	const balances = calculateBalances();
+
+	const calculateTransactions = () => {
+		const transactions = [];
+		const creditors = [];
+		const debtors = [];
+
+		Object.entries(balances).forEach(([uid, balance]) => {
+			if (balance > 0) {
+				creditors.push({ uid,
+					balance });
+			} else if (balance < 0) {
+				debtors.push({ uid,
+					balance: -balance });
+			}
+		});
+
+		// Sort creditors and debtors by balance
+		creditors.sort((a, b) => b.balance - a.balance);
+		debtors.sort((a, b) => b.balance - a.balance);
+
+		while (creditors.length && debtors.length) {
+			const creditor = creditors[0];
+			const debtor = debtors[0];
+
+			const amount = Math.min(creditor.balance, debtor.balance);
+			transactions.push({
+				from: creditor.uid,
+				to: debtor.uid,
+				amount
+			});
+
+			creditor.balance -= amount;
+			debtor.balance -= amount;
+
+			if (creditor.balance === 0) {
+				creditors.shift();
+			}
+			if (debtor.balance === 0) {
+				debtors.shift();
+			}
+		}
+
+		return transactions;
+	};
+
+	const transactions = calculateTransactions();
 
 	return (
 		<div className="h-screen dark:bg-black dark:text-white">
@@ -197,10 +277,10 @@ function GroupDetails() {
 											: <div className="flex flex-col gap-4">
 												{
 													Object.entries(participationPerMember).map(([uid, amount]) => {
-														const member = group.members.find(m => m.uid === uid);
+														const member = getUserName(uid);
 														return (
 															<div key={uid} className="flex justify-between">
-																<span>{member ? member.name : "Unknown"}</span>
+																<span>{member}</span>
 																<span>{amount.toFixed(2)}</span>
 															</div>
 														);
@@ -211,23 +291,17 @@ function GroupDetails() {
 								</div>
 								<div ref={paymentsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
 									{
-										Object.entries(participationPerMember).length === 0
+										transactions.length === 0
 											? <p className="dark:text-white text-center">No payment data found</p>
 											: <div className="flex flex-col gap-4">
 												{
-													Object.entries(participationPerMember).map(([uid, amount]) => {
-														const member = group.members.find(m => m.uid === uid);
-														const totalPaid = expenses.reduce((acc, expense) => {
-															if (expense.paidBy === uid) {
-																return acc + parseFloat(expense.amount);
-															}
-															return acc;
-														}, 0);
-														const balance = totalPaid - amount;
+													transactions.map((transaction, index) => {
+														const fromMember = getUserName(transaction.from);
+														const toMember = getUserName(transaction.to);
 														return (
-															<div key={uid} className="flex justify-between">
-																<span>{member ? member.name : "Unknown"}</span>
-																<span>{balance.toFixed(2)}</span>
+															<div key={index} className="flex justify-between">
+																<span><strong>{fromMember}</strong> owes <strong>{toMember}</strong></span>
+																<span>{transaction.amount.toFixed(2)}</span>
 															</div>
 														);
 													})
