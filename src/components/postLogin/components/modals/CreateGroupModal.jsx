@@ -1,13 +1,22 @@
 import { useAuth } from "../../../../contexts/AuthContext";
 import { db } from "../../../../firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addDoc, collection, Timestamp, updateDoc, doc, arrayUnion } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 function CreateGroupModal({ open, onClose, fetchGroups }) {
 	const { currentUser } = useAuth();
+	const navigate = useNavigate();
 	const [groupName, setGroupName] = useState("");
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		setError("");
+		if (currentUser && !currentUser.displayName) {
+			setError("You need to add a display name to your account before joining or creating groups.");
+		}
+	}, []);
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -82,17 +91,25 @@ function CreateGroupModal({ open, onClose, fetchGroups }) {
 					</label>
 					<button
 						type="submit"
-						disabled={loading || !currentUser}
+						disabled={loading || !currentUser || (currentUser && !currentUser.displayName)}
 						className="p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white
                             disabled:bg-orange-200 hover:disabled:bg-orange-200"
 					>
                         Create group
 					</button>
-					<div className="text-sm text-red-500 text-center mt-[-10px]">
+					<div className="text-sm text-red-500 text-center">
 						<p className={ error ? "visible" : "hidden" }>
 							{error}
 						</p>
 					</div>
+					<button
+						disabled={loading}
+						onClick={() => navigate("/profile")}
+						className={"p-2 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-400 transition hover:dark:bg-orange-600 hover:dark:text-white"
+                            + " disabled:bg-orange-200 hover:disabled:bg-orange-200 " + ((currentUser && !currentUser.displayName) ? "visible" : "hidden")}
+					>
+                        Profile
+					</button>
 				</form>
 			</div>
 		</div>
