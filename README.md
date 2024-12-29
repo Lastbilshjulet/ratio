@@ -16,9 +16,11 @@ This is what Ratio is supposed to do, but for free.
 - [x] Comparing expenses in a group
 - [x] Improve styling on all viewports
 - [x] Update name in groups if displayName is updated
-- [ ] Add darkmode toggle
+- [x] Add darkmode toggle
 - [ ] Improve participation by allowing percentages and exclusions of users
 - [ ] Improve scrolling between "tabs" for expenses
 - [ ] Add redirect after log in to join group page
+- [x] Add multiple colors as themes
 - [ ] Add notifications. Example for when invite link is copied
+- [x] Add language selector
 - [ ] More... 

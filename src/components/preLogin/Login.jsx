@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import ThemeToggle from "../ThemeToggle";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -83,6 +84,8 @@ function Login() {
 				<div className="mt-4 dark:text-white">
 					<Link to={"/signup"}>Don&apos;t have an account? Sign up</Link>
 				</div>
+
+				<ThemeToggle></ThemeToggle>
 			</div>
 		</div>
 	);
