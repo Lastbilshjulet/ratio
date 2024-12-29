@@ -37,7 +37,7 @@ function DeleteExpenseModal({ open, onClose, groupId, expenseId, fetchExpenses }
 	return (
 		<div
 			onClick={toggleClose}
-			className={"fixed top-0 left-0 h-screen w-screen bg-black bg-opacity-30 dark:bg-opacity-70 grid place-items-center " + (open ? "visible" : "hidden")}
+			className={"fixed top-0 left-0 h-screen w-screen z-10 bg-black bg-opacity-30 dark:bg-opacity-70 grid place-items-center " + (open ? "visible" : "hidden")}
 		>
 			<div
 				onClick={stopClose}
