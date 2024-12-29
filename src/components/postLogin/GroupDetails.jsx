@@ -112,6 +112,7 @@ function GroupDetails() {
 	};
 
 	const participationPerMember = getParticipationPerMember();
+	const sortedParticipation = Object.entries(participationPerMember).sort((a, b) => b[1] - a[1]);
 
 	const calculateBalances = () => {
 		const balances = {};
@@ -182,6 +183,7 @@ function GroupDetails() {
 	};
 
 	const transactions = calculateTransactions();
+	const sortedTransactions = transactions.sort((a, b) => b.amount - a.amount);
 
 	return (
 		<div className="h-screen dark:bg-black dark:text-white">
@@ -267,11 +269,11 @@ function GroupDetails() {
 								</div>
 								<div ref={standingsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
 									{
-										Object.entries(participationPerMember).length === 0
+										sortedParticipation.length === 0
 											? <p className="dark:text-white text-center">No participation data found</p>
 											: <div className="flex flex-col gap-4">
 												{
-													Object.entries(participationPerMember).map(([uid, amount]) => {
+													sortedParticipation.map(([uid, amount]) => {
 														const member = getUserName(uid);
 														return (
 															<div key={uid} className="flex justify-between">
@@ -286,11 +288,11 @@ function GroupDetails() {
 								</div>
 								<div ref={paymentsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
 									{
-										transactions.length === 0
+										sortedTransactions.length === 0
 											? <p className="dark:text-white text-center">No payment data found</p>
 											: <div className="flex flex-col gap-4">
 												{
-													transactions.map((transaction, index) => {
+													sortedTransactions.map((transaction, index) => {
 														const fromMember = getUserName(transaction.from);
 														const toMember = getUserName(transaction.to);
 														return (
