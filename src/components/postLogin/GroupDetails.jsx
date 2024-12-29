@@ -49,7 +49,7 @@ function GroupDetails() {
 			setGroup({ ...docSnap.data(),
 				uid: docSnap.id });
 			setError("");
-			fetchGroupExpenses("");
+			fetchGroupExpenses();
 		} else {
 			console.log("docSnap does not exist");
 			navigate("/not-found", { replace: true });
@@ -116,19 +116,15 @@ function GroupDetails() {
 	const calculateBalances = () => {
 		const balances = {};
 
-		expenses.forEach(expense => {
+		expenses.filter(e => categoryFilter ? (categoryFilter.toLowerCase() === e.category.toLowerCase()) : true).forEach(expense => {
 			const paidBy = expense.paid;
 			const amountPaid = parseFloat(expense.amount);
 
-			// Initialize balances for the payer if not already initialized
 			if (!balances[paidBy]) {
 				balances[paidBy] = 0;
 			}
-
-			// Subtract the total amount paid by the payer
 			balances[paidBy] -= amountPaid;
 
-			// Add the participation amounts to the respective members
 			Object.entries(expense.participation).forEach(([uid, amount]) => {
 				if (!balances[uid]) {
 					balances[uid] = 0;
@@ -157,7 +153,6 @@ function GroupDetails() {
 			}
 		});
 
-		// Sort creditors and debtors by balance
 		creditors.sort((a, b) => b.balance - a.balance);
 		debtors.sort((a, b) => b.balance - a.balance);
 
