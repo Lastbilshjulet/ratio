@@ -2,6 +2,8 @@ import NavBar from "./components/NavBar";
 import { useAuth } from "../../contexts/AuthContext";
 import { updateProfile } from "firebase/auth";
 import { useState } from "react";
+import { db } from "../../firebase";
+import { doc, updateDoc, getDocs, query, collection, where } from "firebase/firestore";
 
 function ProfileDashboard() {
 	const { currentUser, ResetPasswordAuth } = useAuth();
@@ -16,15 +18,32 @@ function ProfileDashboard() {
 		e.preventDefault();
 		setLoading(true);
 
-		updateProfile((currentUser), {
-			displayName: displayName
-		}).then(() => {
+		try {
+			await updateProfile(currentUser, {
+				displayName: displayName
+			});
+
+			const q = query(collection(db, "groups"), where("memberIds", "array-contains", currentUser.uid));
+			const querySnapshot = await getDocs(q);
+
+			const updatePromises = querySnapshot.docs.map(docSnap => {
+				const groupRef = doc(db, "groups", docSnap.id);
+				const groupData = docSnap.data();
+				const updatedMembers = groupData.members.map(member =>
+					member.uid === currentUser.uid ? { ...member,
+						name: displayName } : member
+				);
+				return updateDoc(groupRef, { members: updatedMembers });
+			});
+
+			await Promise.all(updatePromises);
+
 			setMessage("Successfully updated profile.");
-		}).catch(() => {
+		} catch {
 			setError("Failed to update profile.");
-		}).finally(() => {
+		} finally {
 			setLoading(false);
-		});
+		}
 	}
 
 	async function handleResetPassword(e) {

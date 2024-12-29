@@ -15,6 +15,7 @@ This is what Ratio is supposed to do, but for free.
 - [x] Filter out expenses within group
 - [x] Comparing expenses in a group
 - [x] Improve styling on all viewports
+- [x] Update name in groups if displayName is updated
 - [ ] Add darkmode toggle
 - [ ] Improve participation by allowing percentages and exclusions of users
 - [ ] Improve scrolling between "tabs" for expenses
