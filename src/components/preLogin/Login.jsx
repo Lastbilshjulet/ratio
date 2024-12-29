@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 function Login() {
 	const [email, setEmail] = useState("");
@@ -10,6 +10,7 @@ function Login() {
 	const [loading, setLoading] = useState(false);
 	const { LogInAuth } = useAuth();
 	const navigate = useNavigate();
+	const location = useLocation();
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -18,7 +19,8 @@ function Login() {
 			setLoading(true);
 			setError("");
 			await LogInAuth(email, password);
-			navigate("/", { replace: true });
+			const redirectPath = new URLSearchParams(location.search).get("redirect") || "/";
+			navigate(redirectPath, { replace: true });
 		} catch {
 			setError("Failed to log in");
 		} finally {
