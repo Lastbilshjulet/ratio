@@ -45,7 +45,6 @@ class Expense {
 		}
 
 		if (combinedParticipationAmount != this.amount) {
-			console.log(combinedParticipationAmount, " !== ", this.amount);
 			return { valid: false,
 				error: "The combined participation amount must equal the total amount" };
 		}
