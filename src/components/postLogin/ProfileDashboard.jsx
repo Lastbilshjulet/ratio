@@ -1,4 +1,5 @@
 import NavBar from "./components/NavBar";
+import ThemeToggle from "../ThemeToggle";
 import { useAuth } from "../../contexts/AuthContext";
 import { updateProfile } from "firebase/auth";
 import { useState } from "react";
@@ -126,6 +127,7 @@ function ProfileDashboard() {
 						</div>
 					}
 				</form>
+				<ThemeToggle></ThemeToggle>
 			</div>
 		</div>
 	);
