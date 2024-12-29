@@ -93,12 +93,14 @@ function GroupDetails() {
 		const participationPerMember = {};
 
 		expenses.forEach(expense => {
-			Object.entries(expense.participation).forEach(([uid, amount]) => {
-				if (!participationPerMember[uid]) {
-					participationPerMember[uid] = 0;
-				}
-				participationPerMember[uid] += parseFloat(amount);
-			});
+			if (categoryFilter ? (categoryFilter.toLowerCase() === expense.category.toLowerCase()) : true) {
+				Object.entries(expense.participation).forEach(([uid, amount]) => {
+					if (!participationPerMember[uid]) {
+						participationPerMember[uid] = 0;
+					}
+					participationPerMember[uid] += parseFloat(amount);
+				});
+			}
 		});
 
 		return participationPerMember;
@@ -208,7 +210,30 @@ function GroupDetails() {
 									}
 								</div>
 								<div ref={paymentsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
-                                    Payments :)
+									{
+										Object.entries(participationPerMember).length === 0
+											? <p className="dark:text-white text-center">No payment data found</p>
+											: <div className="flex flex-col gap-4">
+												{
+													Object.entries(participationPerMember).map(([uid, amount]) => {
+														const member = group.members.find(m => m.uid === uid);
+														const totalPaid = expenses.reduce((acc, expense) => {
+															if (expense.paidBy === uid) {
+																return acc + parseFloat(expense.amount);
+															}
+															return acc;
+														}, 0);
+														const balance = totalPaid - amount;
+														return (
+															<div key={uid} className="flex justify-between">
+																<span>{member ? member.name : "Unknown"}</span>
+																<span>{balance.toFixed(2)}</span>
+															</div>
+														);
+													})
+												}
+											</div>
+									}
 								</div>
 							</div>
 						</div>

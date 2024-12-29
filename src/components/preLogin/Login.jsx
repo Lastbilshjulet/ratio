@@ -18,11 +18,11 @@ function Login() {
 			setLoading(true);
 			setError("");
 			await LogInAuth(email, password);
+			navigate("/", { replace: true });
 		} catch {
 			setError("Failed to log in");
 		} finally {
 			setLoading(false);
-			navigate("/", { replace: true });
 		}
 	}
 
