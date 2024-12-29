@@ -29,6 +29,7 @@ function GroupDetails() {
 
 	useEffect(() => {
 		fetchGroup();
+		setActiveTab("expenses");
 	}, []);
 
 	const handleTabClick = (tab, ref) => {
@@ -84,6 +85,23 @@ function GroupDetails() {
 		handleOpenCreateExpenseModal();
 	};
 
+	const getParticipationPerMember = () => {
+		const participationPerMember = {};
+
+		expenses.forEach(expense => {
+			Object.entries(expense.participation).forEach(([uid, amount]) => {
+				if (!participationPerMember[uid]) {
+					participationPerMember[uid] = 0;
+				}
+				participationPerMember[uid] += parseFloat(amount);
+			});
+		});
+
+		return participationPerMember;
+	};
+
+	const participationPerMember = getParticipationPerMember();
+
 	return (
 		<div className="h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab="groups"></NavBar>
@@ -137,19 +155,19 @@ function GroupDetails() {
 									className={`w-1/3 pt-4 text-center cursor-pointer ${activeTab === "expenses" ? "border-b-4 border-orange-500" : ""}`}
 									onClick={() => handleTabClick("expenses", expensesRef)}
 								>
-									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(expensesRef)}>Expenses</h2>
+									<h2 className="font-bold cursor-pointer pb-2">Expenses</h2>
 								</div>
 								<div
 									className={`w-1/3 pt-4 text-center cursor-pointer ${activeTab === "standings" ? "border-b-4 border-orange-500" : ""}`}
 									onClick={() => handleTabClick("standings", standingsRef)}
 								>
-									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(standingsRef)}>Standings</h2>
+									<h2 className="font-bold cursor-pointer pb-2">Standings</h2>
 								</div>
 								<div
 									className={`w-1/3 pt-4 text-center cursor-pointer ${activeTab === "payments" ? "border-b-4 border-orange-500" : ""}`}
 									onClick={() => handleTabClick("payments", paymentsRef)}
 								>
-									<h2 className="font-bold cursor-pointer pb-2" onClick={() => handleTabClick(paymentsRef)}>Payments</h2>
+									<h2 className="font-bold cursor-pointer pb-2">Payments</h2>
 								</div>
 							</div>
 							<div className="flex overflow-x-auto scroll-snap-x mandatory scrollbar-hide">
@@ -167,7 +185,23 @@ function GroupDetails() {
 									}
 								</div>
 								<div ref={standingsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
-                                    Standings :)
+									{
+										Object.entries(participationPerMember).length === 0
+											? <p className="dark:text-white text-center">No participation data found</p>
+											: <div className="flex flex-col gap-4">
+												{
+													Object.entries(participationPerMember).map(([uid, amount]) => {
+														const member = group.members.find(m => m.uid === uid);
+														return (
+															<div key={uid} className="flex justify-between">
+																<span>{member ? member.name : "Unknown"}</span>
+																<span>{amount.toFixed(2)}</span>
+															</div>
+														);
+													})
+												}
+											</div>
+									}
 								</div>
 								<div ref={paymentsRef} className="flex-shrink-0 w-screen max-w-screen-md p-4 scroll-snap-align-start">
                                     Payments :)
