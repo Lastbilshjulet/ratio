@@ -12,10 +12,12 @@ This is what Ratio is supposed to do, but for free.
 - [x] Allow other users to join groups
 - [x] Reading expenses
 - [x] Creating expenses
-- [ ] Filter out expenses within group
+- [x] Filter out expenses within group
+- [x] Comparing expenses in a group
+- [x] Improve styling on all viewports
+- [ ] Add darkmode toggle
 - [ ] Improve participation by allowing percentages and exclusions of users
-- [ ] Comparing expenses in a group
-- [ ] Add redirect after log in in case of not being redirected there
+- [ ] Improve scrolling between "tabs" for expenses
+- [ ] Add redirect after log in to join group page
 - [ ] Add notifications. Example for when invite link is copied
-- [ ] Improve styling on all viewports
 - [ ] More... 

@@ -25,12 +25,14 @@ class Expense {
 			return { valid: false,
 				error: "Amount needs to be a number" };
 		}
+		this.amount = parseFloat(this.amount).toFixed(2);
 
 		let combinedParticipationAmount = 0;
 		let invalidParticipationInput = false;
 
 		for (const key in this.participation) {
 			if (isNumeric(this.participation[key])) {
+				this.participation[key] = parseFloat(this.participation[key]).toFixed(2);
 				combinedParticipationAmount += parseFloat(this.participation[key]);
 			} else {
 				invalidParticipationInput = true;
@@ -42,7 +44,7 @@ class Expense {
 				error: "Participation amounts must be numbers" };
 		}
 
-		if (combinedParticipationAmount !== parseFloat(this.amount)) {
+		if (combinedParticipationAmount != this.amount) {
 			return { valid: false,
 				error: "The combined participation amount must equal the total amount" };
 		}

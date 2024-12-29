@@ -28,15 +28,16 @@ function SignUp() {
 			navigate("/", { replace: true });
 		} catch (e) {
 			console.log(e);
+			setLoading(false);
 			setError("Failed to create an account");
 		}
 	}
 
 	return (
 		<div className="h-screen flex items-center justify-center dark:bg-black">
-			<div className="border border-black dark:border-white rounded-md p-8">
+			<div className="md:border border-black dark:border-white rounded-md flex flex-col w-screen max-w-screen-md p-4">
 				<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-					<h1 className="text-2xl dark:text-white">
+					<h1 className="text-2xl dark:text-white text-center mb-8">
                         Sign up
 					</h1>
 					<label className="dark:text-white">

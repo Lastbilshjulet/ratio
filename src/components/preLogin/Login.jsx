@@ -18,19 +18,19 @@ function Login() {
 			setLoading(true);
 			setError("");
 			await LogInAuth(email, password);
+			navigate("/", { replace: true });
 		} catch {
 			setError("Failed to log in");
 		} finally {
 			setLoading(false);
-			navigate("/", { replace: true });
 		}
 	}
 
 	return (
 		<div className="h-screen flex items-center justify-center dark:bg-black">
-			<div className="border border-black dark:border-white rounded-md p-8">
+			<div className="md:border border-black dark:border-white rounded-md flex flex-col w-screen max-w-screen-md p-4">
 				<form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-					<h1 className="text-2xl dark:text-white">
+					<h1 className="text-3xl dark:text-white text-center mb-8">
                         Log in
 					</h1>
 					<label className="dark:text-white">
