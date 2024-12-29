@@ -139,7 +139,7 @@ function GroupDetails() {
 							<p className="mx-4">Name: {group.name}</p>
 							{
 								group.members?.length > 1
-									? <p>Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
+									? <p className="mx-4">Members: {group.members.filter(m => m.uid !== currentUser.uid).map(m => m.name).join(", ")}</p>
 									: <></>
 							}
 							<div className="flex overflow-x-auto gap-2 px-4 scrollbar-hide">

@@ -13,7 +13,7 @@ function JoinGroupRedirect() {
 	const [error, setError] = useState("");
 
 	const joinGroup = async () => {
-		if (currentUser !== "") {
+		if (currentUser && currentUser.displayName) {
 			try {
 				await updateDoc(
 					doc(db, "groups", groupId),
@@ -50,7 +50,7 @@ function JoinGroupRedirect() {
 			<NavBar activeTab=""></NavBar>
 			<div className="w-screen p-4 max-w-screen-md flex flex-col m-auto gap-4">
 				{
-					currentUser.displayName === ""
+					!currentUser.displayName
 						? <p>You need to add a display name to your account before joining or creating groups. </p>
 						: <InfinitySpin
 							visible={true}
