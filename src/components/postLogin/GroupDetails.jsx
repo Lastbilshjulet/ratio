@@ -186,7 +186,7 @@ function GroupDetails() {
 	const sortedTransactions = transactions.sort((a, b) => b.amount - a.amount);
 
 	return (
-		<div className="h-screen dark:bg-black dark:text-white">
+		<div className="min-h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab="groups"></NavBar>
 			<div className="grid place-content-center gap-4">
 				{

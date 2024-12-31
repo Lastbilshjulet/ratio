@@ -62,7 +62,7 @@ function ProfileDashboard() {
 	}
 
 	return (
-		<div className="h-screen dark:bg-black dark:text-white">
+		<div className="min-h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab="profile"></NavBar>
 			<div className="w-screen p-4 max-w-screen-md flex flex-col m-auto gap-4">
 				<form className="flex flex-col gap-4" onSubmit={handleProfileDetails}>

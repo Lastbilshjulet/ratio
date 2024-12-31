@@ -46,7 +46,7 @@ function JoinGroupRedirect() {
 	}, []);
 
 	return (
-		<div className="h-screen dark:bg-black dark:text-white">
+		<div className="min-h-screen dark:bg-black dark:text-white">
 			<NavBar activeTab=""></NavBar>
 			<div className="w-screen p-4 max-w-screen-md flex flex-col m-auto gap-4">
 				{
