@@ -161,21 +161,34 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 							{
 								!isNumeric(amount)
 									? <p>The amount must be a number</p>
-									: <div>
-										{
-											group.members.map(m =>
-												<label key={m.uid} className="w-full dark:text-white flex justify-between items-center">
-													{m.name}:
-													<input
-														name={m.uid + "-participation"}
-														defaultValue={expense.participation ? expense.participation[m.uid] : ""}
-														type="text"
-														className="w-16 p-2 border border-black rounded-md dark:text-black"
-													/>
-												</label>
-											)
-										}
-									</div>
+									: <>
+										<div className="flex flex-row-reverse">
+											<label className="relative inline-block w-[76px] h-[38px]">
+												<input type="checkbox" className="opacity-0 w-0 h-0 peer"></input>
+												<span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-black border rounded-full
+                                        border-black dark:border-white transition duration-[400ms] before:absolute before:w-[30px] before:aspect-square
+                                        before:left-[4px] before:bottom-[3px] before:bg-orange-500 before:transition before:duration-[400ms] before:rounded-full
+                                        peer-checked:bg-white peer-checked:before:translate-x-[34px] before:z-10"></span>
+												<span className="absolute left-[6px] bottom-[10px] h-[16px] w-[25px] bg-orange-400 rounded-full peer-checked:w-[50px]
+                                        peer-checked:transition-[width] peer-checked:duration-[400ms] transition-[width] duration-[400ms] cursor-pointer"></span>
+											</label>
+										</div>
+										<div>
+											{
+												group.members.map(m =>
+													<label key={m.uid} className="w-full dark:text-white flex justify-between items-center">
+														{m.name}:
+														<input
+															name={m.uid + "-participation"}
+															defaultValue={expense.participation ? expense.participation[m.uid] : ""}
+															type="text"
+															className="w-16 p-2 border border-black rounded-md dark:text-black"
+														/>
+													</label>
+												)
+											}
+										</div>
+									</>
 							}
 							<button
 								type="submit"
