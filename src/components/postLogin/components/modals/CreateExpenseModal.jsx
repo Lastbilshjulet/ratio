@@ -9,13 +9,131 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 	const { currentUser } = useAuth();
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [amount, setAmount] = useState("");
+	const [paid, setPaid] = useState(expense.paid ?? currentUser.uid);
+	const [amount, setAmount] = useState(expense.amount ?? "");
+	const [usePercentage, setUsePercentage] = useState(true);
+	const [participation, setParticipation] = useState({});
+	const [temporaryInput, setTemporaryInput] = useState(null);
 
 	useEffect(() => {
-		if (expense.amount) {
-			setAmount(expense.amount);
+		if (!group.members) return;
+		const initialParticipation = {};
+		group.members.forEach(m => {
+			if (!initialParticipation[m.uid]) {
+				initialParticipation[m.uid] = {};
+			    initialParticipation[m.uid].amount = 0;
+			    initialParticipation[m.uid].percentage = 0;
+			    initialParticipation[m.uid].isIncluded = true;
+			    initialParticipation[m.uid].isEdited = false;
+			}
+		});
+
+		let amountToShare = amount;
+		let percentageToShare = 100;
+		Object.keys(initialParticipation).forEach(uid => {
+			const percentageShare = 100 / Object.keys(initialParticipation).length;
+			percentageToShare -= percentageShare.toFixed(2);
+			initialParticipation[uid].percentage = percentageShare.toFixed(2);
+			const amountShare = amount / Object.keys(initialParticipation).length;
+			amountToShare -= amountShare.toFixed(2);
+			initialParticipation[uid].amount = amountShare.toFixed(2);
+		});
+		initialParticipation[paid].percentage = "" + (parseFloat(initialParticipation[paid].percentage) + parseFloat(percentageToShare.toFixed(2))).toFixed(2);
+		initialParticipation[paid].amount = "" + (parseFloat(initialParticipation[paid].amount) + parseFloat(amountToShare.toFixed(2))).toFixed(2);
+		setParticipation(initialParticipation);
+	}, [group.members, amount, paid]);
+
+	const updateParticipationValues = (initialParticipation) => {
+		const includedParticipants = Object.keys(initialParticipation).filter(key => initialParticipation[key].isIncluded).length;
+		if (includedParticipants < 1) {
+			console.log("There has to be at least one included participant");
+			return;
 		}
-	}, []);
+		const sortedKeys = Object.keys(initialParticipation).sort((a, b) => {
+			return parseFloat(initialParticipation[a].amount) - parseFloat(initialParticipation[b].amount);
+		});
+
+		let amountToShare = amount;
+		let percentageToShare = 100;
+		let editedParticipants = 0;
+		let lastIncludedParticipant = undefined;
+		sortedKeys.forEach(uid => {
+			if (initialParticipation[uid].isEdited) {
+				editedParticipants++;
+			}
+			if (initialParticipation[uid].isIncluded && initialParticipation[uid].isEdited) {
+				percentageToShare -= initialParticipation[uid].percentage;
+				amountToShare -= initialParticipation[uid].amount;
+				lastIncludedParticipant = uid;
+			}
+		});
+		sortedKeys.forEach(uid => {
+			if (initialParticipation[uid].isIncluded && !initialParticipation[uid].isEdited) {
+				const percentageShare = 100 / includedParticipants;
+				percentageToShare -= percentageShare.toFixed(2);
+				initialParticipation[uid].percentage = percentageShare.toFixed(2);
+				const amountShare = amount / includedParticipants;
+				amountToShare -= amountShare.toFixed(2);
+				initialParticipation[uid].amount = amountShare.toFixed(2);
+				lastIncludedParticipant = uid;
+			}
+		});
+		if (initialParticipation[paid].isIncluded && editedParticipants !== sortedKeys.length) {
+			initialParticipation[paid].percentage = "" + (parseFloat(initialParticipation[paid].percentage) + parseFloat(percentageToShare.toFixed(2))).toFixed(2);
+			initialParticipation[paid].amount = "" + (parseFloat(initialParticipation[paid].amount) + parseFloat(amountToShare.toFixed(2))).toFixed(2);
+		} else if (lastIncludedParticipant) {
+			initialParticipation[lastIncludedParticipant].percentage = "" + (parseFloat(initialParticipation[lastIncludedParticipant].percentage) + parseFloat(percentageToShare.toFixed(2))).toFixed(2);
+			initialParticipation[lastIncludedParticipant].amount = "" + (parseFloat(initialParticipation[lastIncludedParticipant].amount) + parseFloat(amountToShare.toFixed(2))).toFixed(2);
+		}
+		setParticipation(initialParticipation);
+	};
+
+	const handleParticipationValueChange = (uid, value) => {
+		setTemporaryInput({ uid,
+			value });
+	};
+
+	const handleParticipationInclusionChange = (uid, value) => {
+		updateParticipationValues({
+			...participation,
+			[uid]: {
+				amount: 0.00,
+				percentage: 0.00,
+				isIncluded: value ? true : false,
+				isEdited: false
+			}
+		});
+	};
+
+	const handleUsePercentageToggleChange = () => {
+		setUsePercentage(!usePercentage);
+		updateParticipationValues({ ...participation });
+	};
+
+	const handleParticipationInputBlur = (uid) => {
+		if (temporaryInput?.uid !== uid) {
+			return;
+		}
+		let participantPercentage;
+		let participantAmount;
+		if (usePercentage) {
+			participantPercentage = parseFloat(temporaryInput.value).toFixed(2);
+			participantAmount = parseFloat((participantPercentage / 100) * amount).toFixed(2);
+		} else {
+			participantAmount = parseFloat(temporaryInput.value).toFixed(2);
+			participantPercentage = parseFloat((participantAmount / amount) * 100).toFixed(2);
+		}
+		updateParticipationValues({
+			...participation,
+			[uid]: {
+				...participation[uid],
+				amount: participantAmount,
+				percentage: participantPercentage,
+				isEdited: true
+			}
+		});
+		setTemporaryInput(null);
+	};
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -30,7 +148,8 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 
 		const participationData = {};
 		group.members.forEach(m => {
-			participationData[m.uid] = formData.get(m.uid + "-participation");
+			participationData[m.uid].amount = formData.get(m.uid + "-participation");
+			participationData[m.uid].isIncluded = formData.get(m.uid + "-inclusion");
 		});
 
 		const newExpense = new Expense(name, category, paid, currency, amount, participationData);
@@ -69,7 +188,6 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 		} finally {
 			setAmount("");
 			setLoading(false);
-			setAmount("");
 		}
 	}
 
@@ -83,6 +201,11 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 
 	const isNumeric = (str) => {
 		return !isNaN(str) && !isNaN(parseFloat(str));
+	};
+
+	const getUserName = (uid) => {
+		const user = group.members.find(member => member.uid === uid);
+		return user ? user.name : "Unknown";
 	};
 
 	return (
@@ -129,10 +252,10 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 								<select
 									name="paid"
 									id="paid"
-									defaultValue={expense.paid ? expense.paid : "" }
+									value={paid}
+									onChange={(e) => setPaid(e.target.value)}
 									className="w-full p-2 border border-black rounded-md dark:text-black"
 								>
-									<option value="">-- Please select --</option>
 									{
 										group.members.map(m => <option key={ m.uid } value={m.uid}>{ m.name }</option>)
 									}
@@ -162,28 +285,52 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 								!isNumeric(amount)
 									? <p>The amount must be a number</p>
 									: <>
-										<div className="flex flex-row-reverse">
-											<label className="relative inline-block w-[76px] h-[38px]">
-												<input type="checkbox" className="opacity-0 w-0 h-0 peer"></input>
-												<span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-black border rounded-full
-                                        border-black dark:border-white transition duration-[400ms] before:absolute before:w-[30px] before:aspect-square
-                                        before:left-[4px] before:bottom-[3px] before:bg-orange-500 before:transition before:duration-[400ms] before:rounded-full
-                                        peer-checked:bg-white peer-checked:before:translate-x-[34px] before:z-10"></span>
-												<span className="absolute left-[6px] bottom-[10px] h-[16px] w-[25px] bg-orange-400 rounded-full peer-checked:w-[50px]
-                                        peer-checked:transition-[width] peer-checked:duration-[400ms] transition-[width] duration-[400ms] cursor-pointer"></span>
+										<div>
+											<label className="w-full dark:text-white flex justify-between items-center">
+                                                Use percentages:
+												<div className="relative inline-block w-[76px] h-[38px]">
+													<input
+														type="checkbox"
+														className="opacity-0 w-0 h-0 peer"
+														checked={usePercentage}
+														onChange={handleUsePercentageToggleChange}
+													/>
+													<span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-black border rounded-full
+                                                        border-black dark:border-white transition duration-[400ms] before:absolute before:w-[30px] before:aspect-square
+                                                        before:left-[4px] before:bottom-[3px] before:bg-orange-500 before:transition before:duration-[400ms] before:rounded-full
+                                                        peer-checked:bg-white peer-checked:before:translate-x-[34px] before:z-10"></span>
+													<span className="absolute left-[6px] bottom-[10px] h-[16px] w-[25px] bg-orange-400 rounded-full peer-checked:w-[50px]
+                                                        peer-checked:transition-[width] peer-checked:duration-[400ms] transition-[width] duration-[400ms] cursor-pointer"></span>
+												</div>
 											</label>
 										</div>
 										<div>
 											{
-												group.members.map(m =>
-													<label key={m.uid} className="w-full dark:text-white flex justify-between items-center">
-														{m.name}:
-														<input
-															name={m.uid + "-participation"}
-															defaultValue={expense.participation ? expense.participation[m.uid] : ""}
-															type="text"
-															className="w-16 p-2 border border-black rounded-md dark:text-black"
-														/>
+									            participation && Object.entries(participation).map(([key]) =>
+													<label key={key} className="w-full dark:text-white flex justify-between items-center">
+														{getUserName(key)}:
+														<span className="flex gap-2 items-center">
+															{usePercentage ? parseFloat(participation[key].amount).toFixed(2) + "SEK" : parseFloat(participation[key].percentage).toFixed(2) + "%"}
+															<input
+																type="text"
+																name={key + "-participation"}
+																disabled={!participation[key].isIncluded}
+																value={
+																	temporaryInput?.uid == key
+																		? temporaryInput.value
+																		: usePercentage ? parseFloat(participation[key].percentage).toFixed(2) : parseFloat(participation[key].amount).toFixed(2)
+																}
+																onChange={(e) => handleParticipationValueChange(key, e.target.value)}
+																onBlur={() => handleParticipationInputBlur(key)}
+																className="p-1 border border-black rounded-md dark:text-black"
+															/>
+															<input
+																type="checkbox"
+																name={key + "-inclusion"}
+																checked={participation[key].isIncluded}
+																onChange={() => handleParticipationInclusionChange(key, !participation[key].isIncluded)}
+															/>
+														</span>
 													</label>
 												)
 											}

@@ -28,14 +28,26 @@ class Expense {
 		this.amount = parseFloat(this.amount).toFixed(2);
 
 		let combinedParticipationAmount = 0;
+		let combinedParticipationPercentage = 0;
 		let invalidParticipationInput = false;
 
 		for (const key in this.participation) {
-			if (isNumeric(this.participation[key])) {
-				this.participation[key] = parseFloat(this.participation[key]).toFixed(2);
-				combinedParticipationAmount += parseFloat(this.participation[key]);
+			if (isNumeric(this.participation[key].amount)) {
+				this.participation[key].amount = parseFloat(this.participation[key].amount).toFixed(2);
+				combinedParticipationAmount += parseFloat(this.participation[key].amount);
 			} else {
 				invalidParticipationInput = true;
+			}
+			if (isNumeric(this.participation[key].percentage)) {
+				this.participation[key].percentage = parseFloat(this.participation[key].percentage).toFixed(2);
+				combinedParticipationAmount += parseFloat(this.participation[key].percentage);
+			} else {
+				invalidParticipationInput = true;
+			}
+			if (this.participation[key].isIncluded) {
+				if ((this.participation[key].amount !== 0) || (this.participation[key].percentage !== 0)) {
+				    invalidParticipationInput = true;
+				}
 			}
 		}
 
@@ -47,6 +59,11 @@ class Expense {
 		if (combinedParticipationAmount != this.amount) {
 			return { valid: false,
 				error: "The combined participation amount must equal the total amount" };
+		}
+
+		if (combinedParticipationPercentage != 100) {
+			return { valid: false,
+				error: "The combined participation percentage must equal 100" };
 		}
 
 		return { valid: true };
