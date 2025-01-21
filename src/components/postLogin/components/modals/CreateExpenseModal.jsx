@@ -374,6 +374,10 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 																name={key + "-inclusion"}
 																checked={participation[key].isIncluded}
 																onChange={() => handleParticipationInclusionChange(key, !participation[key].isIncluded)}
+																className="w-8 h-8 appearance-none bg-black border-2 border-gray-400 rounded-md
+                                                                    checked:bg-white checked:border-orange-500 checked:after:content-['✓']
+                                                                    checked:after:text-orange-500 checked:after:block checked:after:font-extrabold
+                                                                    checked:after:leading-none checked:after:text-center checked:after:text-2xl"
 															/>
 														</span>
 													</label>
