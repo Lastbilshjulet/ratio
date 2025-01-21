@@ -87,7 +87,7 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 									<span>{getUserName(uid)}:</span>
 									<span className="flex flex-col items-end">
 										<span className="text-gray-600 dark:text-gray-400 text-xs">{p.percentage}%</span>
-										<span>{p.amount}{expense.currency}</span>
+										<span>{p.amount} {expense.currency}</span>
 									</span>
 								</li>
 								: <></>

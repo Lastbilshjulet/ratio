@@ -355,7 +355,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 													<label key={key} className="w-full dark:text-white flex justify-between items-center">
 														{getUserName(key)}:
 														<span className="flex gap-2 items-center">
-															{usePercentage ? parseFloat(participation[key].amount).toFixed(2) + "SEK" : parseFloat(participation[key].percentage).toFixed(2) + "%"}
+															{usePercentage ? parseFloat(participation[key].amount).toFixed(2) + " SEK" : parseFloat(participation[key].percentage).toFixed(2) + "%"}
 															<input
 																type="text"
 																name={key + "-participation"}
