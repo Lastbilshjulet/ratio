@@ -60,7 +60,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 		initialParticipation[paid].percentage = "" + (parseFloat(initialParticipation[paid].percentage) + parseFloat(percentageToShare.toFixed(2))).toFixed(2);
 		initialParticipation[paid].amount = "" + (parseFloat(initialParticipation[paid].amount) + parseFloat(amountToShare.toFixed(2))).toFixed(2);
 		setParticipation(initialParticipation);
-	}, [group.members, amount, paid]);
+	}, [group.members, amount, paid, open]);
 
 	const updateParticipationValues = (initialParticipation) => {
 		const includedParticipants = Object.keys(initialParticipation).filter(key => initialParticipation[key].isIncluded).length;
@@ -113,6 +113,13 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 		}
 		setTemporaryInput({ uid,
 			value });
+	};
+
+	const handleAmountChange = (value) => {
+		if (value < 0) {
+			return;
+		}
+		setAmount(value);
 	};
 
 	const handleParticipationInclusionChange = (uid, value) => {
@@ -320,10 +327,12 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 							<label className="dark:text-white">
                                 Amount: <br />
 								<input
-									type="text"
+									type="number"
 									value={amount}
-									onChange={(e) => setAmount(e.target.value)}
-									className="w-full p-2 border border-black rounded-md dark:text-black"
+									onChange={(e) => handleAmountChange(e.target.value)}
+									min={0}
+									className="w-full p-2 border border-black rounded-md dark:text-black
+                                    [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 								/>
 							</label>
 							{
@@ -357,8 +366,9 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 														<span className="flex gap-2 items-center">
 															{usePercentage ? parseFloat(participation[key].amount).toFixed(2) + " SEK" : parseFloat(participation[key].percentage).toFixed(2) + "%"}
 															<input
-																type="text"
+																type="number"
 																name={key + "-participation"}
+																min={0}
 																disabled={!participation[key].isIncluded}
 																value={
 																	temporaryInput?.uid == key
@@ -367,7 +377,8 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 																}
 																onChange={(e) => handleParticipationValueChange(key, e.target.value)}
 																onBlur={() => handleParticipationInputBlur(key)}
-																className="p-1 border border-black rounded-md dark:text-black"
+																className="p-1 border border-black rounded-md dark:text-black
+                                                                [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 															/>
 															<input
 																type="checkbox"
