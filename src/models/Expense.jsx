@@ -28,14 +28,29 @@ class Expense {
 		this.amount = parseFloat(this.amount).toFixed(2);
 
 		let combinedParticipationAmount = 0;
+		let combinedParticipationPercentage = 0;
 		let invalidParticipationInput = false;
 
 		for (const key in this.participation) {
-			if (isNumeric(this.participation[key])) {
-				this.participation[key] = parseFloat(this.participation[key]).toFixed(2);
-				combinedParticipationAmount += parseFloat(this.participation[key]);
+			if (isNumeric(this.participation[key].amount)) {
+				this.participation[key].amount = parseFloat(this.participation[key].amount).toFixed(2);
+				combinedParticipationAmount += parseFloat(this.participation[key].amount);
 			} else {
+				console.log("Invalid amount: " + this.participation[key].amount);
 				invalidParticipationInput = true;
+			}
+			if (isNumeric(this.participation[key].percentage)) {
+				this.participation[key].percentage = parseFloat(this.participation[key].percentage).toFixed(2);
+				combinedParticipationPercentage += parseFloat(this.participation[key].percentage);
+			} else {
+				console.log("Invalid percentage: " + this.participation[key].percentage);
+				invalidParticipationInput = true;
+			}
+			if (!this.participation[key].isIncluded) {
+				if ((this.participation[key].amount != 0) || (this.participation[key].percentage != 0)) {
+					console.log("Amount or percentage is not 0 when not included: " + this.participation[key].amount + " " + this.participation[key].percentage);
+				    invalidParticipationInput = true;
+				}
 			}
 		}
 
@@ -45,8 +60,15 @@ class Expense {
 		}
 
 		if (combinedParticipationAmount != this.amount) {
+			console.log("Combined participation amount: " + combinedParticipationAmount);
 			return { valid: false,
 				error: "The combined participation amount must equal the total amount" };
+		}
+
+		if (combinedParticipationPercentage != 100) {
+			console.log("Combined participation percentage: " + combinedParticipationPercentage);
+			return { valid: false,
+				error: "The combined participation percentage must equal 100" };
 		}
 
 		return { valid: true };
