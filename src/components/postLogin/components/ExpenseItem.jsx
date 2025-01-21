@@ -77,9 +77,16 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 					<p><strong>Paid by:</strong> {getUserName(expense.paid)}</p>
 					<p><strong>Amount:</strong> {expense.amount} {expense.currency}</p>
 					<p><strong>Participation:</strong></p>
-					<ul>
-						{Object.entries(expense.participation).map(([uid, amount]) => (
-							amount !== 0 ? <li key={uid}>{getUserName(uid)}: {amount} {expense.currency}</li>: <></>
+					<ul className="p-1">
+						{Object.entries(expense.participation).map(([uid, p]) => (
+							p.isIncluded
+								? <li
+									key={uid}
+									className="flex justify-between w-full border-b border-b-gray-400 dark:border-b-gray-600 p-1"
+								>
+									<span>{getUserName(uid)}:</span>
+									{p.amount} {expense.currency} {p.percentage}%</li>
+								: <></>
 						))}
 					</ul>
 					<button
