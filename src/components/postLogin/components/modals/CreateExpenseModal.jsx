@@ -331,6 +331,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 									value={amount}
 									onChange={(e) => handleAmountChange(e.target.value)}
 									min={0}
+									step=".01"
 									className="w-full p-2 border border-black rounded-md dark:text-black
                                     [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 								/>
@@ -372,6 +373,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 																	type="number"
 																	name={key + "-participation"}
 																	min={0}
+																	step=".01"
 																	disabled={!participation[key].isIncluded}
 																	value={
 																		temporaryInput?.uid == key

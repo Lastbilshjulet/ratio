@@ -99,11 +99,11 @@ function GroupDetails() {
 
 		expenses.forEach(expense => {
 			if (categoryFilter ? (categoryFilter.toLowerCase() === expense.category.toLowerCase()) : true) {
-				Object.entries(expense.participation).forEach(([uid, amount]) => {
+				Object.entries(expense.participation).forEach(([uid, p]) => {
 					if (!participationPerMember[uid]) {
 						participationPerMember[uid] = 0;
 					}
-					participationPerMember[uid] += parseFloat(amount);
+					participationPerMember[uid] += parseFloat(p.amount);
 				});
 			}
 		});
@@ -126,11 +126,11 @@ function GroupDetails() {
 			}
 			balances[paidBy] -= amountPaid;
 
-			Object.entries(expense.participation).forEach(([uid, amount]) => {
+			Object.entries(expense.participation).forEach(([uid, p]) => {
 				if (!balances[uid]) {
 					balances[uid] = 0;
 				}
-				balances[uid] += parseFloat(amount);
+				balances[uid] += parseFloat(p.amount);
 			});
 		});
 
@@ -296,7 +296,7 @@ function GroupDetails() {
 														const fromMember = getUserName(transaction.from);
 														const toMember = getUserName(transaction.to);
 														return (
-															<div key={index} className="flex justify-between">
+															<div key={transaction + index} className="flex justify-between">
 																<span><strong>{fromMember}</strong> owes <strong>{toMember}</strong></span>
 																<span>{transaction.amount.toFixed(2)}</span>
 															</div>
