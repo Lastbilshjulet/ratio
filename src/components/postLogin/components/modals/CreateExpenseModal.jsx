@@ -18,14 +18,33 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 	useEffect(() => {
 		if (!group.members) return;
 		const initialParticipation = {};
+		if (expense.participation) {
+			group.members.forEach(m => {
+				if (expense.participation[m.uid]) {
+					initialParticipation[m.uid] = {
+						amount: parseFloat(expense.participation[m.uid].amount).toFixed(2),
+						percentage: parseFloat(expense.participation[m.uid].percentage).toFixed(2),
+						isIncluded: expense.participation[m.uid].isIncluded,
+						isEdited: false
+					};
+				} else {
+					initialParticipation[m.uid] = {
+						amount: 0.00,
+						percentage: 0.00,
+						isIncluded: false,
+						isEdited: false
+					};
+				}
+			});
+			setParticipation(initialParticipation);
+			return;
+		}
 		group.members.forEach(m => {
-			if (!initialParticipation[m.uid]) {
-				initialParticipation[m.uid] = {};
-			    initialParticipation[m.uid].amount = 0;
-			    initialParticipation[m.uid].percentage = 0;
-			    initialParticipation[m.uid].isIncluded = true;
-			    initialParticipation[m.uid].isEdited = false;
-			}
+			initialParticipation[m.uid] = {};
+			initialParticipation[m.uid].amount = 0;
+			initialParticipation[m.uid].percentage = 0;
+			initialParticipation[m.uid].isIncluded = true;
+			initialParticipation[m.uid].isEdited = false;
 		});
 
 		let amountToShare = amount;
