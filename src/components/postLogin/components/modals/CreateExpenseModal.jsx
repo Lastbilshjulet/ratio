@@ -267,7 +267,7 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 		>
 			<div
 			    onClick={stopClose}
-				className="w-[calc(100%-2rem)] max-w-screen-sm p-4 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
+				className="w-[calc(100%-2rem)] max-w-screen-sm max-h-[90vh] overflow-y-auto p-4 bg-white dark:bg-black dark:text-white border border-black dark:border-white rounded-xl"
 			>
 				{
 					!open ? <></>
@@ -358,38 +358,42 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 												</div>
 											</label>
 										</div>
-										<div>
+										<div className="flex flex-col gap-2">
 											{
 									            participation && Object.entries(participation).map(([key]) =>
-													<label key={key} className="w-full dark:text-white flex justify-between items-center">
-														{getUserName(key)}:
-														<span className="flex gap-2 items-center">
-															{usePercentage ? parseFloat(participation[key].amount).toFixed(2) + " SEK" : parseFloat(participation[key].percentage).toFixed(2) + "%"}
-															<input
-																type="number"
-																name={key + "-participation"}
-																min={0}
-																disabled={!participation[key].isIncluded}
-																value={
-																	temporaryInput?.uid == key
-																		? temporaryInput.value
-																		: usePercentage ? parseFloat(participation[key].percentage).toFixed(2) : parseFloat(participation[key].amount).toFixed(2)
-																}
-																onChange={(e) => handleParticipationValueChange(key, e.target.value)}
-																onBlur={() => handleParticipationInputBlur(key)}
-																className="p-1 border border-black rounded-md dark:text-black
-                                                                [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-															/>
-															<input
-																type="checkbox"
-																name={key + "-inclusion"}
-																checked={participation[key].isIncluded}
-																onChange={() => handleParticipationInclusionChange(key, !participation[key].isIncluded)}
-																className="w-8 h-8 appearance-none bg-black border-2 border-gray-400 rounded-md
-                                                                    checked:bg-white checked:border-orange-500 checked:after:content-['✓']
-                                                                    checked:after:text-orange-500 checked:after:block checked:after:font-extrabold
-                                                                    checked:after:leading-none checked:after:text-center checked:after:text-2xl"
-															/>
+													<label key={key} className="w-full dark:text-white">
+														<span className="w-full flex flex-col gap-1">
+															<span className="flex gap-2 justify-between items-center">
+																<span>{getUserName(key)}:</span>
+																<span>{usePercentage ? parseFloat(participation[key].amount).toFixed(2) + " SEK" : parseFloat(participation[key].percentage).toFixed(2) + "%"}</span>
+															</span>
+															<span className="flex gap-2 justify-between items-center">
+																<input
+																	type="number"
+																	name={key + "-participation"}
+																	min={0}
+																	disabled={!participation[key].isIncluded}
+																	value={
+																		temporaryInput?.uid == key
+																			? temporaryInput.value
+																			: usePercentage ? parseFloat(participation[key].percentage).toFixed(2) : parseFloat(participation[key].amount).toFixed(2)
+																	}
+																	onChange={(e) => handleParticipationValueChange(key, e.target.value)}
+																	onBlur={() => handleParticipationInputBlur(key)}
+																	className="p-1 border border-black rounded-md dark:text-black w-full
+                                                                        [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+																/>
+																<input
+																	type="checkbox"
+																	name={key + "-inclusion"}
+																	checked={participation[key].isIncluded}
+																	onChange={() => handleParticipationInclusionChange(key, !participation[key].isIncluded)}
+																	className="w-8 h-8 appearance-none bg-black border-2 border-gray-400 rounded-md
+                                                                        checked:bg-white checked:border-orange-500 checked:after:content-['✓']
+                                                                        checked:after:text-orange-500 checked:after:block checked:after:font-extrabold
+                                                                        checked:after:leading-none checked:after:text-center checked:after:text-2xl aspect-square"
+																/>
+															</span>
 														</span>
 													</label>
 												)
@@ -404,6 +408,13 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
                                     disabled:bg-orange-200 hover:disabled:bg-orange-200"
 							>
 								{expense.uid ? (loading ? "Editing..." : "Edit expense") : (loading ? "Creating..." : "Create expense")}
+							</button>
+							<button
+								onClick={toggleClose}
+								className="p-2 rounded-md font-bold text-white bg-red-500 hover:bg-red-400 transition hover:dark:bg-red-600 hover:dark:text-white
+                                    disabled:bg-red-200 hover:disabled:bg-red-200"
+							>
+                                Cancel
 							</button>
 							<div className="text-sm text-red-500 text-center">
 								<p className={ error ? "visible" : "hidden" }>
