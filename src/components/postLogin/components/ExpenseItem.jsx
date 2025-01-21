@@ -82,10 +82,14 @@ function ExpenseItem({ expense, group, fetchExpenses }) {
 							p.isIncluded
 								? <li
 									key={uid}
-									className="flex justify-between w-full border-b border-b-gray-400 dark:border-b-gray-600 p-1"
+									className="flex justify-between items-end w-full border-b border-b-gray-400 dark:border-b-gray-600 p-1"
 								>
 									<span>{getUserName(uid)}:</span>
-									{p.amount} {expense.currency} {p.percentage}%</li>
+									<span className="flex flex-col items-end">
+										<span className="text-gray-600 dark:text-gray-400 text-xs">{p.percentage}%</span>
+										<span>{p.amount}{expense.currency}</span>
+									</span>
+								</li>
 								: <></>
 						))}
 					</ul>
