@@ -89,6 +89,9 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 	};
 
 	const handleParticipationValueChange = (uid, value) => {
+		if (value < 0) {
+			return;
+		}
 		setTemporaryInput({ uid,
 			value });
 	};
@@ -112,6 +115,18 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 
 	const handleParticipationInputBlur = (uid) => {
 		if (temporaryInput?.uid !== uid) {
+			return;
+		}
+		if (temporaryInput.value == 0) {
+			updateParticipationValues({
+				...participation,
+				[uid]: {
+					amount: 0.00,
+					percentage: 0.00,
+					isIncluded: false,
+					isEdited: false
+				}
+			});
 			return;
 		}
 		let participantPercentage;
@@ -148,8 +163,19 @@ function CreateExpenseModal({ open, onClose, group, fetchExpenses, expense = {} 
 
 		const participationData = {};
 		group.members.forEach(m => {
-			participationData[m.uid].amount = formData.get(m.uid + "-participation");
-			participationData[m.uid].isIncluded = formData.get(m.uid + "-inclusion");
+			if (participation[m.uid]) {
+				participationData[m.uid] = {
+					amount: parseFloat(participation[m.uid].amount),
+					percentage: parseFloat(participation[m.uid].percentage),
+					isIncluded: participation[m.uid].isIncluded
+				};
+			} else {
+				participationData[m.uid] = {
+					amount: 0.00,
+					percentage: 0.00,
+					isIncluded: false
+				};
+			}
 		});
 
 		const newExpense = new Expense(name, category, paid, currency, amount, participationData);
